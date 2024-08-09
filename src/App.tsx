@@ -34,9 +34,11 @@ function App() {
   return (
     <div className='flex flex-col w-screen h-screen'>
       <div className='flex flex-row p-5 gap-x-2'>
-        <h3 className="text-2xl font-semibold tracking-tight">
-          Notes
-        </h3>
+        <a href="/">
+          <h3 className="text-2xl font-semibold tracking-tight">
+            9Notes
+          </h3>
+        </a>
 
         <div className="flex-1" />
 
