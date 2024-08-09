@@ -79,6 +79,7 @@ function App() {
 
       <div className="p-3 w-full h-full">
         <Textarea
+          placeholder={`Write anything here. Everything gets autosaved offline. Cick on the + icon to add more tabs. Enjoy...`}
           className="w-full h-full"
           value={states.tabs[states.selectedTab]} // Use local state
           onChange={(e) => {
