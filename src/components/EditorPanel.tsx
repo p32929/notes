@@ -20,6 +20,7 @@ const EditorPanel: React.FC = () => {
   const selectedNote = states.notes.find(note => note.id === states.selectedNoteId)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [titleValue, setTitleValue] = useState('')
+  const [editor, setEditor] = useState<any>(null)
 
   // Apply current theme
   useEffect(() => {
@@ -164,6 +165,7 @@ const EditorPanel: React.FC = () => {
           onChange={handleContentChange}
           placeholder="Start writing your note..."
           className="h-full"
+          onEditorReady={setEditor}
         />
       </div>
 
@@ -174,6 +176,13 @@ const EditorPanel: React.FC = () => {
             <span>Auto-saved</span>
             <span>Words: {selectedNote.content.split(/\s+/).filter(word => word.length > 0).length}</span>
             <span>Characters: {selectedNote.content.length}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            {editor?.storage?.characterCount && (
+              <span>
+                {editor.storage.characterCount.characters()}/100,000 characters
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ interface RichTextEditorProps {
   onChange: (content: string) => void
   placeholder?: string
   className?: string
+  onEditorReady?: (editor: any) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,7 +132,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   content, 
   onChange, 
   placeholder = "Start writing...",
-  className = ""
+  className = "",
+  onEditorReady
 }) => {
   const editor = useEditor({
     extensions: [
@@ -149,7 +151,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] px-6 py-4',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none h-full px-6 py-4',
       },
     },
   })
@@ -161,18 +163,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   }, [content, editor])
 
+  // Notify parent when editor is ready
+  React.useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor)
+    }
+  }, [editor, onEditorReady])
+
   if (!editor) return null
 
   return (
-    <div className={`border border-border rounded-lg bg-background ${className}`}>
+    <div className={`border border-border rounded-lg bg-background flex flex-col ${className}`}>
       <MenuBar editor={editor} />
-      <div className="relative">
+      <div className="relative flex-1 cursor-text" onClick={() => editor?.commands.focus()}>
         <EditorContent editor={editor} />
-        {editor.storage.characterCount && (
-          <div className="absolute bottom-2 right-2 text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded">
-            {editor.storage.characterCount.characters()}/100,000 characters
-          </div>
-        )}
       </div>
     </div>
   )
