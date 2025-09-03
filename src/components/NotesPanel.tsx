@@ -82,6 +82,7 @@ const NotesPanel: React.FC = () => {
               variant="ghost" 
               size="sm"
               onClick={handleThemeToggle}
+              title={states.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {states.theme === 'dark' ? 
                 <Sun className="h-4 w-4" /> : 
@@ -170,14 +171,6 @@ const NotesPanel: React.FC = () => {
                 </>
               )}
             </div>
-            <Button 
-              onClick={() => {
-                const noteId = controller.createNote()
-                controller.selectNote(noteId)
-              }}
-            >
-              Create your first note
-            </Button>
           </div>
         ) : (
           <div>
@@ -211,6 +204,7 @@ const NotesPanel: React.FC = () => {
                       size="sm"
                       onClick={(e) => handleDeleteNote(note.id, e)}
                       className="text-destructive hover:text-destructive"
+                      title="Delete note"
                     >
                       <Trash className="h-4 w-4" />
                     </Button>

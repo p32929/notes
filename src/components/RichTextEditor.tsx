@@ -35,6 +35,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          title="Heading 1"
         >
           H1
         </Button>
@@ -42,6 +43,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          title="Heading 2"
         >
           H2
         </Button>
@@ -49,6 +51,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          title="Heading 3"
         >
           H3
         </Button>
@@ -61,6 +64,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('bold') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
+          title="Bold"
         >
           <Bold className="h-4 w-4" />
         </Button>
@@ -68,6 +72,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('italic') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
+          title="Italic"
         >
           <Italic className="h-4 w-4" />
         </Button>
@@ -75,6 +80,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('strike') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleStrike().run()}
+          title="Strikethrough"
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
@@ -82,6 +88,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('code') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleCode().run()}
+          title="Inline code"
         >
           <Code className="h-4 w-4" />
         </Button>
@@ -94,6 +101,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
+          title="Bullet list"
         >
           <List className="h-4 w-4" />
         </Button>
@@ -101,6 +109,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          title="Numbered list"
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
@@ -108,6 +117,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
           size="sm"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          title="Quote"
         >
           <Quote className="h-4 w-4" />
         </Button>
@@ -120,6 +130,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal rule"
         >
           <Minus className="h-4 w-4" />
         </Button>

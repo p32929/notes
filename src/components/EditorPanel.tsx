@@ -138,11 +138,11 @@ const EditorPanel: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" title="Share note">
               <Share className="h-4 w-4" />
             </Button>
 
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" title="Download note">
               <Download className="h-4 w-4" />
             </Button>
 
@@ -151,6 +151,7 @@ const EditorPanel: React.FC = () => {
               size="sm"
               onClick={handleDelete}
               className="text-destructive hover:text-destructive"
+              title="Delete note"
             >
               <Trash className="h-4 w-4" />
             </Button>
