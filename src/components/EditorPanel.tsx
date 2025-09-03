@@ -5,18 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import RichTextEditor from './RichTextEditor'
 import { 
-  Star, 
-  Archive, 
   Trash, 
   Share, 
   Download, 
   Edit3,
   Calendar,
   Clock,
-  Tag,
-  FileText,
-  Moon,
-  Sun
+  FileText
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 
@@ -81,29 +76,9 @@ const EditorPanel: React.FC = () => {
     controller.updateNote(selectedNote.id, { content })
   }
 
-  const handleToggleFavorite = () => {
-    controller.toggleFavorite(selectedNote.id)
-  }
-
-  const handleToggleArchive = () => {
-    controller.toggleArchive(selectedNote.id)
-  }
-
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this note?')) {
       controller.deleteNote(selectedNote.id)
-    }
-  }
-
-  const handleThemeToggle = () => {
-    const newTheme = states.theme === 'light' ? 'dark' : 'light'
-    controller.setTheme(newTheme)
-    
-    // Apply theme to document
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
     }
   }
 
@@ -162,41 +137,12 @@ const EditorPanel: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleFavorite}
-              className={selectedNote.isFavorite ? 'text-yellow-500' : ''}
-            >
-              <Star className={`h-4 w-4 ${selectedNote.isFavorite ? 'fill-current' : ''}`} />
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleArchive}
-              className={selectedNote.isArchived ? 'text-blue-500' : ''}
-            >
-              <Archive className="h-4 w-4" />
-            </Button>
-
             <Button variant="ghost" size="sm">
               <Share className="h-4 w-4" />
             </Button>
 
             <Button variant="ghost" size="sm">
               <Download className="h-4 w-4" />
-            </Button>
-
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleThemeToggle}
-            >
-              {states.theme === 'dark' ? 
-                <Sun className="h-4 w-4" /> : 
-                <Moon className="h-4 w-4" />
-              }
             </Button>
 
             <Button
@@ -228,10 +174,6 @@ const EditorPanel: React.FC = () => {
             <span>Auto-saved</span>
             <span>Words: {selectedNote.content.split(/\s+/).filter(word => word.length > 0).length}</span>
             <span>Characters: {selectedNote.content.length}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Tag className="h-3 w-3" />
-            <span>Tags: {selectedNote.tags.length}</span>
           </div>
         </div>
       </div>

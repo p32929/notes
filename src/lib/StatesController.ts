@@ -16,35 +16,18 @@ export interface INote {
     content: string
     createdAt: number
     updatedAt: number
-    folderId: string
-    tags: string[]
-    isFavorite: boolean
-    isArchived: boolean
-}
-
-export interface IFolder {
-    id: string
-    name: string
-    color: string
-    parentId: string | null
-    createdAt: number
 }
 
 export interface IStates {
     selectedTab: number
     tabs: string[]
-    // New enhanced state structure
+    // Enhanced state structure
     notes: INote[]
-    folders: IFolder[]
     selectedNoteId: string | null
-    selectedFolderId: string
     searchQuery: string
-    viewMode: 'grid' | 'list'
     sortBy: 'updatedAt' | 'createdAt' | 'title'
     sortOrder: 'asc' | 'desc'
     theme: 'light' | 'dark' | 'system'
-    showFavorites: boolean
-    showArchived: boolean
 }
 
 export class Controller {
@@ -54,26 +37,13 @@ export class Controller {
         selectedTab: 0,
         tabs: [""],
         
-        // New enhanced state
+        // Enhanced state
         notes: [],
-        folders: [
-            {
-                id: 'default',
-                name: 'All Notes',
-                color: '#6366f1',
-                parentId: null,
-                createdAt: Date.now()
-            }
-        ],
         selectedNoteId: null,
-        selectedFolderId: 'default',
         searchQuery: '',
-        viewMode: 'list',
         sortBy: 'updatedAt',
         sortOrder: 'desc',
-        theme: 'system',
-        showFavorites: false,
-        showArchived: false
+        theme: 'system'
     }
 
     @action
@@ -125,17 +95,13 @@ export class Controller {
         }
     }
 
-    createNote(title: string = 'Untitled Note', folderId: string = 'default'): string {
+    createNote(title: string = 'Untitled Note'): string {
         const newNote: INote = {
             id: `note_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             title,
             content: '',
             createdAt: Date.now(),
-            updatedAt: Date.now(),
-            folderId,
-            tags: [],
-            isFavorite: false,
-            isArchived: false
+            updatedAt: Date.now()
         }
         this._createNoteAction(newNote, true)
         return newNote.id
@@ -162,73 +128,8 @@ export class Controller {
     }
 
     @action
-    private _createFolderAction(folder: IFolder) {
-        this.states.folders.push(folder)
-    }
-
-    createFolder(name: string, parentId: string | null = null, color: string = '#6366f1'): string {
-        const newFolder: IFolder = {
-            id: `folder_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
-            name,
-            color,
-            parentId,
-            createdAt: Date.now()
-        }
-        this._createFolderAction(newFolder)
-        return newFolder.id
-    }
-
-    @action
-    updateFolder(id: string, updates: Partial<IFolder>) {
-        const folderIndex = this.states.folders.findIndex(folder => folder.id === id)
-        if (folderIndex !== -1) {
-            this.states.folders[folderIndex] = {
-                ...this.states.folders[folderIndex],
-                ...updates
-            }
-        }
-    }
-
-    @action
-    deleteFolder(id: string) {
-        // Move notes to default folder
-        this.states.notes.forEach(note => {
-            if (note.folderId === id) {
-                note.folderId = 'default'
-            }
-        })
-        this.states.folders = this.states.folders.filter(folder => folder.id !== id)
-        if (this.states.selectedFolderId === id) {
-            this.states.selectedFolderId = 'default'
-        }
-    }
-
-    @action
     selectNote(id: string | null) {
         this.states.selectedNoteId = id
-    }
-
-    @action
-    selectFolder(id: string) {
-        this.states.selectedFolderId = id
-    }
-
-    @action
-    toggleFavorite(id: string) {
-        const note = this.states.notes.find(note => note.id === id)
-        if (note) {
-            note.isFavorite = !note.isFavorite
-            note.updatedAt = Date.now()
-        }
-    }
-
-    @action
-    toggleArchive(id: string) {
-        const note = this.states.notes.find(note => note.id === id)
-        if (note) {
-            note.isArchived = !note.isArchived
-            note.updatedAt = Date.now()
-        }
     }
 
     @action
@@ -246,29 +147,13 @@ export class Controller {
     getFilteredNotes() {
         let notes = [...this.states.notes]
 
-        // Filter by folder
-        if (this.states.selectedFolderId !== 'default') {
-            notes = notes.filter(note => note.folderId === this.states.selectedFolderId)
-        }
-
         // Filter by search query
         if (this.states.searchQuery) {
             const query = this.states.searchQuery.toLowerCase()
             notes = notes.filter(note => 
                 note.title.toLowerCase().includes(query) ||
-                note.content.toLowerCase().includes(query) ||
-                note.tags.some(tag => tag.toLowerCase().includes(query))
+                note.content.toLowerCase().includes(query)
             )
-        }
-
-        // Filter by favorites
-        if (this.states.showFavorites) {
-            notes = notes.filter(note => note.isFavorite)
-        }
-
-        // Filter archived
-        if (!this.states.showArchived) {
-            notes = notes.filter(note => !note.isArchived)
         }
 
         // Sort notes

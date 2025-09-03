@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { useEffect, useCallback } from "react";
 import React from "react";
 import { getData, saveData } from "@/lib/utils";
-import Sidebar from "@/components/Sidebar";
 import NotesPanel from "@/components/NotesPanel";
 import EditorPanel from "@/components/EditorPanel";
 
@@ -31,7 +30,6 @@ function App() {
 
   return (
     <div className="flex h-screen bg-background text-foreground">
-      <Sidebar />
       <NotesPanel />
       <EditorPanel />
     </div>

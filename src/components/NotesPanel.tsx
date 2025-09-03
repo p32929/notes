@@ -5,16 +5,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { 
   Search, 
-  Star, 
-  Archive, 
   Trash, 
-  Grid,
-  List,
   SortAsc,
   SortDesc,
   Clock,
   Calendar,
-  Type
+  Type,
+  Plus,
+  Moon,
+  Sun
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -33,20 +32,22 @@ const NotesPanel: React.FC = () => {
     controller.selectNote(noteId)
   }
 
-  const handleToggleFavorite = (noteId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    controller.toggleFavorite(noteId)
-  }
-
-  const handleToggleArchive = (noteId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    controller.toggleArchive(noteId)
-  }
-
   const handleDeleteNote = (noteId: string, e: React.MouseEvent) => {
     e.stopPropagation()
     if (window.confirm('Are you sure you want to delete this note?')) {
       controller.deleteNote(noteId)
+    }
+  }
+
+  const handleThemeToggle = () => {
+    const newTheme = states.theme === 'light' ? 'dark' : 'light'
+    controller.setTheme(newTheme)
+    
+    // Apply theme to document
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
     }
   }
 
@@ -72,8 +73,35 @@ const NotesPanel: React.FC = () => {
 
   return (
     <div className="w-80 border-r border-border flex flex-col h-full bg-background">
-      {/* Search Header */}
+      {/* Header */}
       <div className="p-4 border-b border-border">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-lg">9Notes</h2>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleThemeToggle}
+            >
+              {states.theme === 'dark' ? 
+                <Sun className="h-4 w-4" /> : 
+                <Moon className="h-4 w-4" />
+              }
+            </Button>
+          </div>
+        </div>
+        
+        <Button 
+          className="w-full mb-4" 
+          onClick={() => {
+            const noteId = controller.createNote()
+            controller.selectNote(noteId)
+          }}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          New Note
+        </Button>
+
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -84,55 +112,36 @@ const NotesPanel: React.FC = () => {
           />
         </div>
 
-        {/* View and Sort Controls */}
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center gap-1">
-            <Button
-              variant={states.viewMode === 'list' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => controller.setStates({ viewMode: 'list' })}
-            >
-              <List className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={states.viewMode === 'grid' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => controller.setStates({ viewMode: 'grid' })}
-            >
-              <Grid className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                const sortOptions = ['updatedAt', 'createdAt', 'title'] as const
-                const currentIndex = sortOptions.indexOf(states.sortBy)
-                const nextSort = sortOptions[(currentIndex + 1) % sortOptions.length]
-                controller.setStates({ sortBy: nextSort })
-              }}
-              title={`Sort by ${states.sortBy}`}
-            >
-              {getSortIcon()}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                controller.setStates({ 
-                  sortOrder: states.sortOrder === 'asc' ? 'desc' : 'asc' 
-                })
-              }}
-              title={`${states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order`}
-            >
-              {states.sortOrder === 'asc' ? 
-                <SortAsc className="h-4 w-4" /> : 
-                <SortDesc className="h-4 w-4" />
-              }
-            </Button>
-          </div>
+        {/* Sort Controls */}
+        <div className="flex items-center justify-end mt-3 gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const sortOptions = ['updatedAt', 'createdAt', 'title'] as const
+              const currentIndex = sortOptions.indexOf(states.sortBy)
+              const nextSort = sortOptions[(currentIndex + 1) % sortOptions.length]
+              controller.setStates({ sortBy: nextSort })
+            }}
+            title={`Sort by ${states.sortBy}`}
+          >
+            {getSortIcon()}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              controller.setStates({ 
+                sortOrder: states.sortOrder === 'asc' ? 'desc' : 'asc' 
+              })
+            }}
+            title={`${states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order`}
+          >
+            {states.sortOrder === 'asc' ? 
+              <SortAsc className="h-4 w-4" /> : 
+              <SortDesc className="h-4 w-4" />
+            }
+          </Button>
         </div>
 
         {/* Results count */}
@@ -171,62 +180,32 @@ const NotesPanel: React.FC = () => {
             </Button>
           </div>
         ) : (
-          <div className={states.viewMode === 'grid' ? 'p-2 grid grid-cols-1 gap-2' : ''}>
+          <div>
             {filteredNotes.map(note => (
               <div
                 key={note.id}
                 className={`
-                  group cursor-pointer transition-colors hover:bg-muted/50
+                  group cursor-pointer transition-colors hover:bg-muted/50 border-b p-4
                   ${states.selectedNoteId === note.id ? 'bg-muted border-l-4 border-l-primary' : ''}
-                  ${states.viewMode === 'grid' ? 'rounded-lg border p-3' : 'border-b p-4'}
                 `}
                 onClick={() => handleNoteSelect(note.id)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <h3 className={`font-medium truncate ${states.viewMode === 'grid' ? 'text-sm' : ''}`}>
+                    <h3 className="font-medium truncate">
                       {note.title || 'Untitled'}
                     </h3>
-                    <p className={`text-muted-foreground mt-1 ${
-                      states.viewMode === 'grid' ? 'text-xs line-clamp-2' : 'text-sm line-clamp-2'
-                    }`}>
+                    <p className="text-muted-foreground mt-1 text-sm line-clamp-2">
                       {getPreviewText(note.content) || 'No content'}
                     </p>
-                    <div className={`flex items-center gap-2 mt-2 ${
-                      states.viewMode === 'grid' ? 'text-xs' : 'text-xs'
-                    } text-muted-foreground`}>
+                    <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                       <span>
                         {formatDistanceToNow(note.updatedAt, { addSuffix: true })}
                       </span>
-                      {note.tags.length > 0 && (
-                        <>
-                          <span>•</span>
-                          <span className="truncate">
-                            {note.tags.slice(0, 2).map(tag => `#${tag}`).join(' ')}
-                            {note.tags.length > 2 && ` +${note.tags.length - 2}`}
-                          </span>
-                        </>
-                      )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleToggleFavorite(note.id, e)}
-                      className={note.isFavorite ? 'text-yellow-500' : ''}
-                    >
-                      <Star className={`h-4 w-4 ${note.isFavorite ? 'fill-current' : ''}`} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleToggleArchive(note.id, e)}
-                      className={note.isArchived ? 'text-blue-500' : ''}
-                    >
-                      <Archive className="h-4 w-4" />
-                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
