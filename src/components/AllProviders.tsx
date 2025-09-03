@@ -4,13 +4,7 @@ import { store } from '@/lib/StatesController';
 import React from 'react'
 import { Provider } from 'react-redux';
 
-
-interface Props {
-
-}
-
-const AllProviders: React.FC<Props> = (props) => {
-
+const AllProviders: React.FC = () => {
     return (
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <Provider store={store}>
@@ -18,7 +12,6 @@ const AllProviders: React.FC<Props> = (props) => {
             </Provider>
         </ThemeProvider>
     )
-
 }
 
 export default AllProviders;
