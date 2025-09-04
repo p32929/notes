@@ -20,8 +20,6 @@ import {
 import RichTextEditor from './RichTextEditor'
 import { 
   Trash, 
-  Share, 
-  Download, 
   Edit3,
   Calendar,
   Clock,
@@ -172,24 +170,6 @@ const EditorPanel: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-1.5 touch-manipulation">
-                  <Share className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Share note</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-1.5 touch-manipulation">
-                  <Download className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Download note</TooltipContent>
-            </Tooltip>
-
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

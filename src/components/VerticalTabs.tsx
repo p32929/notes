@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, X, Menu, MoreHorizontal } from 'lucide-react'
+import { Plus, FileText, X, Menu, MoreHorizontal, Upload, Download, Trash2 } from 'lucide-react'
 
 const VerticalTabs: React.FC = () => {
   const states = useSelector(() => controller.states)
@@ -26,6 +26,8 @@ const VerticalTabs: React.FC = () => {
     title: '' 
   })
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showOptionsDialog, setShowOptionsDialog] = useState(false)
+  const [clearAllDialog, setClearAllDialog] = useState(false)
 
   // Add/remove class to hide cursor when menu is open
   React.useEffect(() => {
@@ -59,6 +61,66 @@ const VerticalTabs: React.FC = () => {
   const handleCreateNote = () => {
     const noteId = controller.createNote()
     controller.selectNote(noteId)
+  }
+
+  const handleExportNotes = () => {
+    const dataStr = JSON.stringify(states.notes, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `9notes-export-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    setShowOptionsDialog(false)
+  }
+
+  const handleImportNotes = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          try {
+            const importedNotes = JSON.parse(e.target?.result as string)
+            if (Array.isArray(importedNotes)) {
+              importedNotes.forEach((note: any) => {
+                if (note.title !== undefined && note.content !== undefined) {
+                  const noteId = controller.createNote()
+                  controller.updateNote(noteId, {
+                    title: note.title,
+                    content: note.content
+                  })
+                }
+              })
+            }
+          } catch (error) {
+            console.error('Error importing notes:', error)
+          }
+        }
+        reader.readAsText(file)
+      }
+    }
+    input.click()
+    setShowOptionsDialog(false)
+  }
+
+  const handleClearAllNotes = () => {
+    setClearAllDialog(true)
+    setShowOptionsDialog(false)
+  }
+
+  const confirmClearAllNotes = () => {
+    // Delete all notes
+    states.notes.forEach(note => {
+      controller.deleteNote(note.id)
+    })
+    setClearAllDialog(false)
   }
 
   return (
@@ -164,12 +226,13 @@ const VerticalTabs: React.FC = () => {
         </div>
 
         {/* Footer Section */}
-        <div className="p-2 border-t border-border/50">
+        <div className="p-2 border-t border-border/50 relative">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setShowOptionsDialog(true)}
                 className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
               >
                 <MoreHorizontal className="h-4 w-4" />
@@ -179,6 +242,7 @@ const VerticalTabs: React.FC = () => {
               <p>More options</p>
             </TooltipContent>
           </Tooltip>
+
         </div>
 
         {/* Full Menu Panel - Overlay on top of everything */}
@@ -258,6 +322,44 @@ const VerticalTabs: React.FC = () => {
           </>
         )}
 
+        <Dialog open={showOptionsDialog} onOpenChange={setShowOptionsDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Options</DialogTitle>
+              <DialogDescription>
+                Manage your notes and data
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                onClick={handleImportNotes}
+                className="w-full justify-start gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Import Notes
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleExportNotes}
+                className="w-full justify-start gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export Notes
+              </Button>
+              <div className="h-px bg-border my-2"></div>
+              <Button
+                variant="outline"
+                onClick={handleClearAllNotes}
+                className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear All Notes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <Dialog open={deleteDialog.isOpen} onOpenChange={(open) => 
           setDeleteDialog({ ...deleteDialog, isOpen: open })
         }>
@@ -280,6 +382,31 @@ const VerticalTabs: React.FC = () => {
                 onClick={confirmDeleteNote}
               >
                 Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={clearAllDialog} onOpenChange={setClearAllDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Clear All Notes</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete all notes? This will permanently remove all {states.notes.length} note{states.notes.length !== 1 ? 's' : ''} and cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setClearAllDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={confirmClearAllNotes}
+              >
+                Clear All Notes
               </Button>
             </DialogFooter>
           </DialogContent>
