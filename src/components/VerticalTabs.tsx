@@ -103,7 +103,7 @@ const VerticalTabs: React.FC = () => {
                     size="sm"
                     onClick={() => handleNoteSelect(note.id)}
                     className={`
-                      w-full h-10 p-0 flex items-center justify-center relative
+                      w-full h-10 p-0 flex items-center justify-center
                       ${states.selectedNoteId === note.id 
                         ? 'bg-primary/10 border-r-2 border-r-primary' 
                         : 'hover:bg-muted/50'
@@ -111,10 +111,6 @@ const VerticalTabs: React.FC = () => {
                     `}
                   >
                     <FileText className="h-4 w-4" />
-                    {/* Note index */}
-                    <span className="absolute -bottom-1 -right-1 text-[8px] bg-muted-foreground text-background rounded-full w-3 h-3 flex items-center justify-center">
-                      {index + 1}
-                    </span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
