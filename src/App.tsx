@@ -20,7 +20,9 @@ function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number
 
 function App() {
   const states = useSelector(() => controller.states);
-  const debouncedUpdateData = useCallback(() => debounce(saveData, 1000)(), []);
+  const debouncedUpdateData = useCallback(() => debounce(() => {
+    saveData().catch(error => console.error('Auto-save failed:', error))
+  }, 1000)(), []);
   const [showSearchDialog, setShowSearchDialog] = useState(false);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ function App() {
   }, [states, debouncedUpdateData])
 
   useEffect(() => {
-    getData()
+    getData().catch(error => console.error('Failed to load data:', error))
   }, [])
 
   // Listen for custom events from child components
@@ -57,7 +59,7 @@ function App() {
     },
     'cmd+s': () => {
       // Manual save (though auto-save is already active)
-      saveData()
+      saveData().catch(error => console.error('Manual save failed:', error))
     },
     'cmd+f': () => {
       // Open search dialog
