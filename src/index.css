@@ -124,6 +124,11 @@
     @apply focus:outline-none h-full min-h-full;
   }
 
+  /* Hide cursor when menu overlay is active */
+  .menu-overlay-active .ProseMirror {
+    caret-color: transparent;
+  }
+
   .ProseMirror p.is-editor-empty:first-child::before {
     @apply text-muted-foreground;
     content: attr(data-placeholder);
