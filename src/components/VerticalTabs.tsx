@@ -27,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { TooltipWithShortcut, SimpleTooltip } from '@/components/ui/tooltip-with-shortcut'
 import {
   Dialog,
   DialogContent,
@@ -36,7 +37,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Plus, FileText, X, Menu, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical } from 'lucide-react'
-import { getShortcutDisplay } from '@/hooks/useKeyboardShortcuts'
 
 interface SortableNoteProps {
   note: any
@@ -75,6 +75,16 @@ const SortableNote: React.FC<SortableNoteProps> = ({ note, index, isSelected, on
     }
   }
 
+  const noteTitle = note.title || `Note ${index + 1}`
+  const noteDescription = note.content ? (
+    (() => {
+      const div = document.createElement('div')
+      div.innerHTML = note.content
+      const text = div.textContent || div.innerText || ''
+      return text.slice(0, 100) + (text.length > 100 ? '...' : '')
+    })()
+  ) : 'Empty note'
+
   return (
     <div ref={setNodeRef} style={style} className="relative group px-2">
       <Tooltip>
@@ -109,23 +119,10 @@ const SortableNote: React.FC<SortableNoteProps> = ({ note, index, isSelected, on
             />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right">
-          <div className="max-w-xs">
-            <div className="font-medium">
-              {note.title || `Note ${index + 1}`}
-            </div>
-            <div className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-[200px]">
-              {note.content ? (
-                (() => {
-                  const div = document.createElement('div')
-                  div.innerHTML = note.content
-                  const text = div.textContent || div.innerText || ''
-                  return text.slice(0, 100) + (text.length > 100 ? '...' : '')
-                })()
-              ) : (
-                'Empty note'
-              )}
-            </div>
+        <TooltipContent side="right" className="max-w-xs">
+          <div className="flex flex-col">
+            <span className="font-medium text-white">{noteTitle}</span>
+            <span className="text-xs text-white mt-1">{noteDescription}</span>
           </div>
         </TooltipContent>
       </Tooltip>
@@ -268,41 +265,28 @@ const VerticalTabs: React.FC = () => {
         {/* Header Section */}
         <div className="p-2 space-y-2 border-b border-border/50">
           {/* Hamburger Menu Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="w-full h-10 p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group"
-              >
-                <Menu className="h-4 w-4 group-hover:text-primary transition-colors" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>All Notes</p>
-            </TooltipContent>
-          </Tooltip>
+          <SimpleTooltip title="All Notes" side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="w-full h-10 p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group"
+            >
+              <Menu className="h-4 w-4 group-hover:text-primary transition-colors" />
+            </Button>
+          </SimpleTooltip>
 
           {/* New Note Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCreateNote}
-                className="w-full h-10 p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group border border-dashed border-border/30 hover:border-primary/30"
-              >
-                <Plus className="h-4 w-4 group-hover:text-primary transition-colors" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <div className="flex flex-col">
-                <span>New Note</span>
-                <span className="text-xs text-muted-foreground">{getShortcutDisplay('cmd+n')}</span>
-              </div>
-            </TooltipContent>
-          </Tooltip>
+          <TooltipWithShortcut title="New Note" shortcut="cmd+n" side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCreateNote}
+              className="w-full h-10 p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group border border-dashed border-border/30 hover:border-primary/30"
+            >
+              <Plus className="h-4 w-4 group-hover:text-primary transition-colors" />
+            </Button>
+          </TooltipWithShortcut>
         </div>
 
         {/* Notes Tabs */}
@@ -331,21 +315,16 @@ const VerticalTabs: React.FC = () => {
 
         {/* Footer Section */}
         <div className="p-2 border-t border-border/50 relative">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowOptionsDialog(true)}
-                className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Settings</p>
-            </TooltipContent>
-          </Tooltip>
+          <SimpleTooltip title="Settings" side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowOptionsDialog(true)}
+              className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
+          </SimpleTooltip>
 
         </div>
 

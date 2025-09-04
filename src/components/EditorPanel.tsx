@@ -26,6 +26,7 @@ import {
   FileText
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
+import { TooltipWithShortcut } from '@/components/ui/tooltip-with-shortcut'
 import { getShortcutDisplay } from '@/hooks/useKeyboardShortcuts'
 
 const EditorPanel: React.FC = () => {
@@ -181,24 +182,16 @@ const EditorPanel: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDelete}
-                  className="text-red-500 hover:text-red-600 p-1.5 touch-manipulation"
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="flex flex-col">
-                  <span>Delete note</span>
-                  <span className="text-xs text-muted-foreground">{getShortcutDisplay('cmd+d')}</span>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+            <TooltipWithShortcut title="Delete note" shortcut="cmd+d">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDelete}
+                className="text-red-500 hover:text-red-600 p-1.5 touch-manipulation"
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </TooltipWithShortcut>
           </div>
         </div>
       </div>

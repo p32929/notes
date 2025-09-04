@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { SimpleTooltip } from '@/components/ui/tooltip-with-shortcut'
 import {
   Dialog,
   DialogContent,
@@ -121,7 +122,9 @@ const NotesPanel: React.FC = () => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {states.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                <span className="font-medium text-white">
+                  {states.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                </span>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -168,7 +171,7 @@ const NotesPanel: React.FC = () => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              Sort by {states.sortBy}
+              <span className="font-medium text-white">Sort by {states.sortBy}</span>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -190,7 +193,9 @@ const NotesPanel: React.FC = () => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              {states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order
+              <span className="font-medium text-white">
+                {states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order
+              </span>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -262,7 +267,7 @@ const NotesPanel: React.FC = () => {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        Delete note
+                        <span className="font-medium text-white">Delete note</span>
                       </TooltipContent>
                     </Tooltip>
                   </div>

@@ -52,7 +52,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 H1
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Heading 1</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Heading 1</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -65,7 +65,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 H2
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Heading 2</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Heading 2</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -78,7 +78,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 H3
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Heading 3</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Heading 3</span></TooltipContent>
           </Tooltip>
         </div>
 
@@ -96,7 +96,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Bold className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Bold</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Bold</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -109,7 +109,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Italic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Italic</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Italic</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -122,7 +122,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Strikethrough className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Strikethrough</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Strikethrough</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -135,7 +135,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Inline code</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Inline code</span></TooltipContent>
           </Tooltip>
         </div>
 
@@ -153,7 +153,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <List className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Bullet list</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Bullet list</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -166,7 +166,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <ListOrdered className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Numbered list</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Numbered list</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -179,7 +179,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Quote className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Quote</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Quote</span></TooltipContent>
           </Tooltip>
         </div>
 
@@ -197,7 +197,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <FileCode className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Code block</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Code block</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -210,7 +210,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Horizontal rule</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Horizontal rule</span></TooltipContent>
           </Tooltip>
         </div>
 
@@ -229,7 +229,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Undo</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Undo</span></TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -243,7 +243,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Redo</TooltipContent>
+            <TooltipContent><span className="font-medium text-white">Redo</span></TooltipContent>
           </Tooltip>
         </div>
       </div>
