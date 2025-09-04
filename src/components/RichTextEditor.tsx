@@ -4,6 +4,12 @@ import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { 
   Bold, 
   Italic, 
@@ -29,113 +35,159 @@ const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null
 
   return (
-    <div className="border-b border-border p-2 flex flex-wrap items-center gap-1">
-      <div className="flex items-center gap-1">
-        <Button
-          variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          title="Heading 1"
-        >
-          H1
-        </Button>
-        <Button
-          variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          title="Heading 2"
-        >
-          H2
-        </Button>
-        <Button
-          variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          title="Heading 3"
-        >
-          H3
-        </Button>
+    <TooltipProvider>
+      <div className="border-b border-border p-2 flex flex-wrap items-center gap-1">
+        <div className="flex items-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+              >
+                H1
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Heading 1</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              >
+                H2
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Heading 2</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              >
+                H3
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Heading 3</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <Separator orientation="vertical" className="h-8" />
+
+        <div className="flex items-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('bold') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+              >
+                <Bold className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Bold</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('italic') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+              >
+                <Italic className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Italic</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('strike') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleStrike().run()}
+              >
+                <Strikethrough className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Strikethrough</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('code') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleCode().run()}
+              >
+                <Code className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Inline code</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <Separator orientation="vertical" className="h-8" />
+
+        <div className="flex items-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Bullet list</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              >
+                <ListOrdered className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Numbered list</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              >
+                <Quote className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Quote</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <Separator orientation="vertical" className="h-8" />
+
+        <div className="flex items-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Horizontal rule</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
-
-      <Separator orientation="vertical" className="h-8" />
-
-      <div className="flex items-center gap-1">
-        <Button
-          variant={editor.isActive('bold') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Bold"
-        >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={editor.isActive('italic') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Italic"
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={editor.isActive('strike') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
-        >
-          <Strikethrough className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={editor.isActive('code') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          title="Inline code"
-        >
-          <Code className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <Separator orientation="vertical" className="h-8" />
-
-      <div className="flex items-center gap-1">
-        <Button
-          variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet list"
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered list"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title="Quote"
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <Separator orientation="vertical" className="h-8" />
-
-      <div className="flex items-center gap-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="Horizontal rule"
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-      </div>
-    </div>
+    </TooltipProvider>
   )
 }
 

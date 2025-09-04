@@ -3,6 +3,20 @@ import { useSelector } from 'react-redux'
 import { controller } from '@/lib/StatesController'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { 
   Search, 
   Trash, 
@@ -20,6 +34,11 @@ import { formatDistanceToNow } from 'date-fns'
 const NotesPanel: React.FC = () => {
   const states = useSelector(() => controller.states)
   const [searchQuery, setSearchQuery] = useState(states.searchQuery)
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; noteId: string; title: string }>({ 
+    isOpen: false, 
+    noteId: '', 
+    title: '' 
+  })
 
   const filteredNotes = controller.getFilteredNotes()
 
@@ -34,9 +53,17 @@ const NotesPanel: React.FC = () => {
 
   const handleDeleteNote = (noteId: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      controller.deleteNote(noteId)
-    }
+    const note = states.notes.find(n => n.id === noteId)
+    setDeleteDialog({ 
+      isOpen: true, 
+      noteId, 
+      title: note?.title || 'Untitled' 
+    })
+  }
+
+  const confirmDeleteNote = () => {
+    controller.deleteNote(deleteDialog.noteId)
+    setDeleteDialog({ isOpen: false, noteId: '', title: '' })
   }
 
   const handleThemeToggle = () => {
@@ -53,6 +80,7 @@ const NotesPanel: React.FC = () => {
 
   const getPreviewText = (content: string) => {
     // Strip HTML tags for preview
+    if (!content) return ''
     const div = document.createElement('div')
     div.innerHTML = content
     const text = div.textContent || div.innerText || ''
@@ -72,23 +100,30 @@ const NotesPanel: React.FC = () => {
   }
 
   return (
-    <div className="w-80 border-r border-border flex flex-col h-full bg-background">
+    <TooltipProvider>
+      <div className="w-80 border-r border-border flex flex-col h-full bg-background">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-lg">9Notes</h2>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleThemeToggle}
-              title={states.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {states.theme === 'dark' ? 
-                <Sun className="h-4 w-4" /> : 
-                <Moon className="h-4 w-4" />
-              }
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleThemeToggle}
+                >
+                  {states.theme === 'dark' ? 
+                    <Sun className="h-4 w-4" /> : 
+                    <Moon className="h-4 w-4" />
+                  }
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {states.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
         
@@ -115,34 +150,46 @@ const NotesPanel: React.FC = () => {
 
         {/* Sort Controls */}
         <div className="flex items-center justify-end mt-3 gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              const sortOptions = ['updatedAt', 'createdAt', 'title'] as const
-              const currentIndex = sortOptions.indexOf(states.sortBy)
-              const nextSort = sortOptions[(currentIndex + 1) % sortOptions.length]
-              controller.setStates({ sortBy: nextSort })
-            }}
-            title={`Sort by ${states.sortBy}`}
-          >
-            {getSortIcon()}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              controller.setStates({ 
-                sortOrder: states.sortOrder === 'asc' ? 'desc' : 'asc' 
-              })
-            }}
-            title={`${states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order`}
-          >
-            {states.sortOrder === 'asc' ? 
-              <SortAsc className="h-4 w-4" /> : 
-              <SortDesc className="h-4 w-4" />
-            }
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const sortOptions = ['updatedAt', 'createdAt', 'title'] as const
+                  const currentIndex = sortOptions.indexOf(states.sortBy)
+                  const nextSort = sortOptions[(currentIndex + 1) % sortOptions.length]
+                  controller.setStates({ sortBy: nextSort })
+                }}
+              >
+                {getSortIcon()}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Sort by {states.sortBy}
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  controller.setStates({ 
+                    sortOrder: states.sortOrder === 'asc' ? 'desc' : 'asc' 
+                  })
+                }}
+              >
+                {states.sortOrder === 'asc' ? 
+                  <SortAsc className="h-4 w-4" /> : 
+                  <SortDesc className="h-4 w-4" />
+                }
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {states.sortOrder === 'asc' ? 'Ascending' : 'Descending'} order
+            </TooltipContent>
+          </Tooltip>
         </div>
 
         {/* Results count */}
@@ -199,15 +246,21 @@ const NotesPanel: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleDeleteNote(note.id, e)}
-                      className="text-destructive hover:text-destructive"
-                      title="Delete note"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleDeleteNote(note.id, e)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Delete note
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
@@ -215,7 +268,35 @@ const NotesPanel: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+
+      <Dialog open={deleteDialog.isOpen} onOpenChange={(open) => 
+        setDeleteDialog({ ...deleteDialog, isOpen: open })
+      }>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Note</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deleteDialog.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteDialog({ isOpen: false, noteId: '', title: '' })}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteNote}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </TooltipProvider>
   )
 }
 

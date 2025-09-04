@@ -3,6 +3,20 @@ import { useSelector } from 'react-redux'
 import { controller } from '@/lib/StatesController'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import RichTextEditor from './RichTextEditor'
 import { 
   Trash, 
@@ -21,6 +35,7 @@ const EditorPanel: React.FC = () => {
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [titleValue, setTitleValue] = useState('')
   const [editor, setEditor] = useState<any>(null)
+  const [deleteDialog, setDeleteDialog] = useState(false)
 
   // Apply current theme
   useEffect(() => {
@@ -78,13 +93,25 @@ const EditorPanel: React.FC = () => {
   }
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      controller.deleteNote(selectedNote.id)
-    }
+    setDeleteDialog(true)
+  }
+
+  const confirmDelete = () => {
+    controller.deleteNote(selectedNote.id)
+    setDeleteDialog(false)
+  }
+
+  // Helper function to extract text content from HTML
+  const getTextContent = (htmlContent: string): string => {
+    if (!htmlContent) return ''
+    const div = document.createElement('div')
+    div.innerHTML = htmlContent
+    return div.textContent || div.innerText || ''
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-background">
+    <TooltipProvider>
+      <div className="flex-1 flex flex-col bg-background">
       {/* Header */}
       <div className="border-b border-border p-4">
         <div className="flex items-center justify-between">
@@ -127,34 +154,48 @@ const EditorPanel: React.FC = () => {
                   Created {format(selectedNote.createdAt, 'MMM d, yyyy')}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
-                <FileText className="h-4 w-4" />
-                <span>
-                  {selectedNote.content.length} characters
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" title="Share note">
-              <Share className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Share className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Share note
+              </TooltipContent>
+            </Tooltip>
 
-            <Button variant="ghost" size="sm" title="Download note">
-              <Download className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Download className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Download note
+              </TooltipContent>
+            </Tooltip>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDelete}
-              className="text-destructive hover:text-destructive"
-              title="Delete note"
-            >
-              <Trash className="h-4 w-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Delete note
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -175,19 +216,42 @@ const EditorPanel: React.FC = () => {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <span>Auto-saved</span>
-            <span>Words: {selectedNote.content.split(/\s+/).filter(word => word.length > 0).length}</span>
-            <span>Characters: {selectedNote.content.length}</span>
+            <span>Words: {getTextContent(selectedNote.content).split(/\s+/).filter(word => word.length > 0).length}</span>
           </div>
           <div className="flex items-center gap-4">
-            {editor?.storage?.characterCount && (
-              <span>
-                {editor.storage.characterCount.characters()}/100,000 characters
-              </span>
-            )}
+            <span>
+              {getTextContent(selectedNote.content).length}/100,000 characters
+            </span>
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Note</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{selectedNote.title || 'Untitled'}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDelete}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </TooltipProvider>
   )
 }
 
