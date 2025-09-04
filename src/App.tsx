@@ -31,7 +31,7 @@ function App() {
 
   // Keyboard shortcuts
   const shortcuts = {
-    'cmd+n': () => {
+    'cmd+k': () => {
       // Create new note
       const noteId = controller.createNote()
       controller.selectNote(noteId)

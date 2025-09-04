@@ -236,7 +236,7 @@ const VerticalTabs: React.FC = () => {
         {/* Header Section */}
         <div className="p-2 space-y-2 border-b border-border/50">
           {/* New Note Button */}
-          <TooltipWithShortcut title="New Note" shortcut="cmd+n" side="right">
+          <TooltipWithShortcut title="New Note" shortcut="cmd+k" side="right">
             <Button
               variant="ghost"
               size="sm"

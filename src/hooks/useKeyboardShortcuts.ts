@@ -9,10 +9,12 @@ export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Check if user is typing in an input or editor
       const target = event.target as HTMLElement
-      const isEditing = target.tagName === 'INPUT' || 
-                       target.tagName === 'TEXTAREA' || 
-                       target.contentEditable === 'true' ||
-                       target.closest('.ProseMirror')
+      const isEditing = target && (
+        target.tagName === 'INPUT' || 
+        target.tagName === 'TEXTAREA' || 
+        target.contentEditable === 'true' ||
+        (target.closest && target.closest('.ProseMirror'))
+      )
 
       // Don't trigger shortcuts if user is editing text
       if (isEditing && !event.metaKey && !event.ctrlKey) {

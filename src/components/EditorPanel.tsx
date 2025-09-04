@@ -122,7 +122,7 @@ const EditorPanel: React.FC = () => {
               <Edit3 className="w-4 h-4 mr-2" />
               Create New Note
               <span className="ml-2 text-xs text-white/80">
-                {getShortcutDisplay('cmd+n')}
+                {getShortcutDisplay('cmd+k')}
               </span>
             </Button>
           </div>
