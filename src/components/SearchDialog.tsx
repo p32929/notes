@@ -17,6 +17,13 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }
   const [selectedIndex, setSelectedIndex] = useState(0)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
+  const stripHtmlTags = (html: string) => {
+    // Create a temporary element to parse HTML and extract text content
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = html
+    return tempDiv.textContent || tempDiv.innerText || ''
+  }
+
   // Filter notes based on search query
   const filteredNotes = React.useMemo(() => {
     if (!searchQuery.trim()) return []
@@ -24,12 +31,14 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }
     const query = searchQuery.toLowerCase()
     return states.notes.filter(note => {
       const titleMatch = note.title.toLowerCase().includes(query)
-      const contentMatch = note.content.toLowerCase().includes(query)
+      const plainContent = stripHtmlTags(note.content)
+      const contentMatch = plainContent.toLowerCase().includes(query)
       return titleMatch || contentMatch
     }).map(note => {
       // Calculate relevance score for fuzzy search
       const titleMatch = note.title.toLowerCase().includes(query)
-      const contentMatch = note.content.toLowerCase().includes(query)
+      const plainContent = stripHtmlTags(note.content)
+      const contentMatch = plainContent.toLowerCase().includes(query)
       const titleScore = titleMatch ? 10 : 0
       const contentScore = contentMatch ? 5 : 0
       
@@ -97,19 +106,22 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }
   }
 
   const getPreviewText = (content: string, query: string) => {
-    if (!query.trim()) return content.slice(0, 100) + '...'
+    // Strip HTML tags from content first
+    const plainContent = stripHtmlTags(content)
     
-    const lowerContent = content.toLowerCase()
+    if (!query.trim()) return plainContent.slice(0, 100) + '...'
+    
+    const lowerContent = plainContent.toLowerCase()
     const lowerQuery = query.toLowerCase()
     const index = lowerContent.indexOf(lowerQuery)
     
-    if (index === -1) return content.slice(0, 100) + '...'
+    if (index === -1) return plainContent.slice(0, 100) + '...'
     
     const start = Math.max(0, index - 50)
-    const end = Math.min(content.length, index + query.length + 50)
-    const preview = content.slice(start, end)
+    const end = Math.min(plainContent.length, index + query.length + 50)
+    const preview = plainContent.slice(start, end)
     
-    return (start > 0 ? '...' : '') + preview + (end < content.length ? '...' : '')
+    return (start > 0 ? '...' : '') + preview + (end < plainContent.length ? '...' : '')
   }
 
   return (
