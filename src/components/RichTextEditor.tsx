@@ -18,7 +18,10 @@ import {
   List,
   ListOrdered,
   Quote,
-  Minus
+  Minus,
+  FileCode,
+  Undo,
+  Redo
 } from 'lucide-react'
 import React from 'react'
 
@@ -188,6 +191,19 @@ const MenuBar = ({ editor }: { editor: any }) => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
+              >
+                <FileCode className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Code block</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
@@ -195,6 +211,39 @@ const MenuBar = ({ editor }: { editor: any }) => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>Horizontal rule</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
+
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().undo().run()}
+                disabled={!editor.can().undo()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation disabled:opacity-50"
+              >
+                <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Undo</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().redo().run()}
+                disabled={!editor.can().redo()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation disabled:opacity-50"
+              >
+                <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Redo</TooltipContent>
           </Tooltip>
         </div>
       </div>
