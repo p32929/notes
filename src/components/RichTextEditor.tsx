@@ -98,7 +98,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
+        <Separator orientation="vertical" className="h-8 sm:h-9 mx-1 flex-shrink-0 self-center" />
 
         <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
@@ -170,7 +170,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
+        <Separator orientation="vertical" className="h-8 sm:h-9 mx-1 flex-shrink-0 self-center" />
 
         <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
@@ -224,7 +224,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
+        <Separator orientation="vertical" className="h-8 sm:h-9 mx-1 flex-shrink-0 self-center" />
 
         <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
@@ -260,7 +260,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
+        <Separator orientation="vertical" className="h-8 sm:h-9 mx-1 flex-shrink-0 self-center" />
 
         <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>

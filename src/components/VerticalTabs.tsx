@@ -249,7 +249,7 @@ const VerticalTabs: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={handleCreateNote}
-              className="w-full h-10 p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group border border-dashed border-border/30 hover:border-primary/30"
+              className="w-full h-11 sm:h-[52px] p-0 flex items-center justify-center hover:bg-primary/10 transition-all duration-200 group border border-dashed border-border/30 hover:border-primary/30"
             >
               <Plus className="h-4 w-4 group-hover:text-primary transition-colors" />
             </Button>
