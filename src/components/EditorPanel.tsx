@@ -193,7 +193,7 @@ const EditorPanel: React.FC = () => {
                   variant="ghost"
                   size="sm"
                   onClick={handleDelete}
-                  className="text-destructive hover:text-destructive p-1.5 touch-manipulation"
+                  className="text-red-500 hover:text-red-600 p-1.5 touch-manipulation"
                 >
                   <Trash className="h-4 w-4" />
                 </Button>

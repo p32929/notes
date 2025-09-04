@@ -132,7 +132,7 @@ const VerticalTabs: React.FC = () => {
                             e.stopPropagation()
                             handleDeleteNote(note.id, e)
                           }}
-                          className="absolute inset-0 m-auto h-4 w-4 text-destructive opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 cursor-pointer hover:text-destructive/80"
+                          className="absolute inset-0 m-auto h-4 w-4 text-red-500 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 cursor-pointer hover:text-red-600"
                         />
                       )}
                     </Button>
