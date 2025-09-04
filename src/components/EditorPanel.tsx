@@ -152,12 +152,15 @@ const EditorPanel: React.FC = () => {
                 autoFocus
               />
             ) : (
-              <h1 
-                className="text-base font-semibold cursor-pointer hover:text-muted-foreground transition-colors truncate"
+              <div 
+                className="flex items-center group cursor-pointer"
                 onClick={handleTitleEdit}
               >
-                {selectedNote.title || 'Untitled Note'}
-              </h1>
+                <h1 className="text-base font-semibold hover:text-muted-foreground transition-colors truncate">
+                  {selectedNote.title || 'Untitled Note'}
+                </h1>
+                <Edit3 className="h-3 w-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
+              </div>
             )}
             
             {/* Compact metadata */}
