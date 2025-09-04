@@ -249,8 +249,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className={`border border-border rounded-lg bg-background flex flex-col ${className}`}>
       <MenuBar editor={editor} />
-      <div className="relative flex-1 cursor-text" onClick={() => editor?.commands.focus()}>
-        <EditorContent editor={editor} />
+      <div className="relative flex-1 cursor-text min-h-0" onClick={() => editor?.commands.focus()}>
+        <EditorContent editor={editor} className="h-full" />
       </div>
     </div>
   )

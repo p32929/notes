@@ -121,7 +121,7 @@
 @layer utilities {
   /* Editor-specific styles */
   .ProseMirror {
-    @apply focus:outline-none;
+    @apply focus:outline-none h-full min-h-full;
   }
 
   .ProseMirror p.is-editor-empty:first-child::before {
