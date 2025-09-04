@@ -49,7 +49,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                 className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
-                H1
+                <span className={editor.isActive('heading', { level: 1 }) ? 'text-white' : ''}>H1</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Heading 1</span></TooltipContent>
@@ -62,7 +62,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
-                H2
+                <span className={editor.isActive('heading', { level: 2 }) ? 'text-white' : ''}>H2</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Heading 2</span></TooltipContent>
@@ -75,7 +75,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                 className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
-                H3
+                <span className={editor.isActive('heading', { level: 3 }) ? 'text-white' : ''}>H3</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Heading 3</span></TooltipContent>
@@ -93,7 +93,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Bold className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Bold className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('bold') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Bold</span></TooltipContent>
@@ -106,7 +106,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Italic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Italic className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('italic') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Italic</span></TooltipContent>
@@ -119,7 +119,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Strikethrough className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Strikethrough className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('strike') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Strikethrough</span></TooltipContent>
@@ -132,7 +132,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleCode().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Code className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('code') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Inline code</span></TooltipContent>
@@ -150,7 +150,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <List className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <List className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('bulletList') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Bullet list</span></TooltipContent>
@@ -163,7 +163,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <ListOrdered className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <ListOrdered className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('orderedList') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Numbered list</span></TooltipContent>
@@ -176,7 +176,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
                 className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Quote className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Quote className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('blockquote') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
             <TooltipContent><span className="font-medium text-white">Quote</span></TooltipContent>

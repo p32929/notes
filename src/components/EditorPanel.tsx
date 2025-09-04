@@ -61,6 +61,38 @@ const EditorPanel: React.FC = () => {
     }
   }, [states.color])
 
+  // Listen for keyboard shortcut delete trigger
+  useEffect(() => {
+    const handleDeleteTrigger = () => {
+      if (selectedNote) {
+        setDeleteDialog(true)
+      }
+    }
+
+    window.addEventListener('triggerDeleteDialog', handleDeleteTrigger)
+    return () => window.removeEventListener('triggerDeleteDialog', handleDeleteTrigger)
+  }, [selectedNote])
+
+  // Handle keyboard navigation in delete dialog
+  useEffect(() => {
+    const handleDialogKeyboard = (e: KeyboardEvent) => {
+      if (deleteDialog) {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          confirmDelete()
+        } else if (e.key === 'Escape') {
+          e.preventDefault()
+          setDeleteDialog(false)
+        }
+      }
+    }
+
+    if (deleteDialog) {
+      document.addEventListener('keydown', handleDialogKeyboard)
+      return () => document.removeEventListener('keydown', handleDialogKeyboard)
+    }
+  }, [deleteDialog, selectedNote])
+
   if (!selectedNote) {
     return (
       <div className="flex-1 flex flex-col bg-background h-full">
@@ -89,7 +121,7 @@ const EditorPanel: React.FC = () => {
             >
               <Edit3 className="w-4 h-4 mr-2" />
               Create New Note
-              <span className="ml-2 text-xs text-muted-foreground">
+              <span className="ml-2 text-xs text-white/80">
                 {getShortcutDisplay('cmd+n')}
               </span>
             </Button>
@@ -229,19 +261,27 @@ const EditorPanel: React.FC = () => {
               Are you sure you want to delete "{selectedNote.title || 'Untitled'}"? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setDeleteDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={confirmDelete}
-            >
-              Delete
-            </Button>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <div className="text-xs text-muted-foreground mb-2 sm:mb-0 sm:mr-auto">
+              Press Enter to delete, Escape to cancel
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setDeleteDialog(false)}
+              >
+                Cancel
+                <span className="ml-2 text-xs text-muted-foreground">Esc</span>
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={confirmDelete}
+                autoFocus
+              >
+                Delete
+                <span className="ml-2 text-xs text-white">Enter</span>
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

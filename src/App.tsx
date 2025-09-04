@@ -37,9 +37,10 @@ function App() {
       controller.selectNote(noteId)
     },
     'cmd+d': () => {
-      // Delete current note
+      // Trigger delete dialog - dispatch custom event for EditorPanel to handle
       if (states.selectedNoteId) {
-        controller.deleteNote(states.selectedNoteId)
+        const event = new CustomEvent('triggerDeleteDialog')
+        window.dispatchEvent(event)
       }
     },
     'cmd+s': () => {
