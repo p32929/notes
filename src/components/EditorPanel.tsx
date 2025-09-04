@@ -26,6 +26,7 @@ import {
   FileText
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
+import { getShortcutDisplay } from '@/hooks/useKeyboardShortcuts'
 
 const EditorPanel: React.FC = () => {
   const states = useSelector(() => controller.states)
@@ -87,6 +88,9 @@ const EditorPanel: React.FC = () => {
             >
               <Edit3 className="w-4 h-4 mr-2" />
               Create New Note
+              <span className="ml-2 text-xs text-muted-foreground">
+                {getShortcutDisplay('cmd+n')}
+              </span>
             </Button>
           </div>
         </div>
@@ -188,7 +192,12 @@ const EditorPanel: React.FC = () => {
                   <Trash className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Delete note</TooltipContent>
+              <TooltipContent>
+                <div className="flex flex-col">
+                  <span>Delete note</span>
+                  <span className="text-xs text-muted-foreground">{getShortcutDisplay('cmd+d')}</span>
+                </div>
+              </TooltipContent>
             </Tooltip>
           </div>
         </div>

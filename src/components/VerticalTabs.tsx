@@ -36,6 +36,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Plus, FileText, X, Menu, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical } from 'lucide-react'
+import { getShortcutDisplay } from '@/hooks/useKeyboardShortcuts'
 
 interface SortableNoteProps {
   note: any
@@ -52,12 +53,26 @@ const SortableNote: React.FC<SortableNoteProps> = ({ note, index, isSelected, on
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: note.id })
+  } = useSortable({ 
+    id: note.id,
+    // Configure sensor to allow both click and drag
+    data: {
+      type: 'note',
+      note,
+    },
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Only select if it's a simple click, not a drag operation
+    if (!isDragging) {
+      onSelect(note.id)
+    }
   }
 
   return (
@@ -69,14 +84,15 @@ const SortableNote: React.FC<SortableNoteProps> = ({ note, index, isSelected, on
             {...listeners}
             variant="ghost"
             size="sm"
-            onClick={() => onSelect(note.id)}
+            onClick={handleClick}
             className={`
-              relative w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing
+              relative w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg overflow-hidden cursor-pointer
               ${isSelected 
                 ? 'bg-primary/15 text-primary border-2 border-primary/20 shadow-sm' 
                 : 'hover:bg-muted/50 border-2 border-transparent hover:border-border/30'
               }
             `}
+            style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
           >
             {/* Main file icon - scales down on hover to make room for drag icon */}
             <FileText 
@@ -129,7 +145,11 @@ const VerticalTabs: React.FC = () => {
   const [clearAllDialog, setClearAllDialog] = useState(false)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px of movement before starting drag
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -277,7 +297,10 @@ const VerticalTabs: React.FC = () => {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>New Note</p>
+              <div className="flex flex-col">
+                <span>New Note</span>
+                <span className="text-xs text-muted-foreground">{getShortcutDisplay('cmd+n')}</span>
+              </div>
             </TooltipContent>
           </Tooltip>
         </div>
