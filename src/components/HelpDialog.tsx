@@ -102,7 +102,7 @@ export const HelpDialog: React.FC<HelpDialogProps> = ({ open, onOpenChange }) =>
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-4xl h-[80vh] max-h-[700px] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Keyboard className="w-5 h-5" />

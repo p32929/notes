@@ -319,7 +319,7 @@ const VerticalTabs: React.FC = () => {
 
 
         <Dialog open={showOptionsDialog} onOpenChange={setShowOptionsDialog}>
-          <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl h-[80vh] max-h-[600px] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Theme Settings</DialogTitle>
               <DialogDescription>
@@ -428,26 +428,31 @@ const VerticalTabs: React.FC = () => {
 
 
         <Dialog open={clearAllDialog} onOpenChange={setClearAllDialog}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="w-[95vw] max-w-md sm:w-auto">
             <DialogHeader>
               <DialogTitle>Clear All Notes</DialogTitle>
               <DialogDescription>
                 Are you sure you want to delete all notes? This will permanently remove all {states.notes.length} note{states.notes.length !== 1 ? 's' : ''} and cannot be undone.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setClearAllDialog(false)}
-              >
-                Cancel
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={confirmClearAllNotes}
-              >
-                Clear All Notes
-              </Button>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2">
+              <div className="text-xs text-muted-foreground mb-2 sm:mb-0 sm:mr-auto">
+                This action cannot be undone
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setClearAllDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={confirmClearAllNotes}
+                >
+                  Clear All Notes
+                </Button>
+              </div>
             </DialogFooter>
           </DialogContent>
         </Dialog>

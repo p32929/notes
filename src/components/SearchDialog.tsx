@@ -126,7 +126,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-hidden flex flex-col">
+      <DialogContent className="w-[95vw] max-w-2xl h-[80vh] max-h-[600px] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Search className="w-5 h-5" />
