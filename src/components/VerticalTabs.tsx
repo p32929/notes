@@ -36,7 +36,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical } from 'lucide-react'
+import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical, HelpCircle } from 'lucide-react'
+import { HelpDialog } from './HelpDialog'
 
 interface SortableNoteProps {
   note: any
@@ -134,6 +135,7 @@ const VerticalTabs: React.FC = () => {
   const states = useSelector(() => controller.states)
   const [showOptionsDialog, setShowOptionsDialog] = useState(false)
   const [clearAllDialog, setClearAllDialog] = useState(false)
+  const [showHelpDialog, setShowHelpDialog] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -273,7 +275,18 @@ const VerticalTabs: React.FC = () => {
         </div>
 
         {/* Footer Section */}
-        <div className="p-2 border-t border-border/50 relative">
+        <div className="p-2 border-t border-border/50 relative space-y-2">
+          <SimpleTooltip title="Help" side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowHelpDialog(true)}
+              className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+          </SimpleTooltip>
+          
           <SimpleTooltip title="Settings" side="right">
             <Button
               variant="ghost"
@@ -289,7 +302,7 @@ const VerticalTabs: React.FC = () => {
 
 
         <Dialog open={showOptionsDialog} onOpenChange={setShowOptionsDialog}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Theme Settings</DialogTitle>
               <DialogDescription>
@@ -398,7 +411,7 @@ const VerticalTabs: React.FC = () => {
 
 
         <Dialog open={clearAllDialog} onOpenChange={setClearAllDialog}>
-          <DialogContent>
+          <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Clear All Notes</DialogTitle>
               <DialogDescription>
@@ -421,6 +434,11 @@ const VerticalTabs: React.FC = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <HelpDialog 
+          open={showHelpDialog} 
+          onOpenChange={setShowHelpDialog} 
+        />
       </div>
     </TooltipProvider>
   )

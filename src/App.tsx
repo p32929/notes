@@ -72,6 +72,46 @@ function App() {
       if (currentIndex < states.notes.length - 1) {
         controller.selectNote(states.notes[currentIndex + 1].id)
       }
+    },
+    'cmd+b': () => {
+      // Bold text
+      document.execCommand('bold')
+    },
+    'cmd+shift+i': () => {
+      // Italic text
+      document.execCommand('italic')
+    },
+    'cmd+u': () => {
+      // Underline text
+      document.execCommand('underline')
+    },
+    'cmd+shift+s': () => {
+      // Strikethrough text
+      document.execCommand('strikeThrough')
+    },
+    'cmd+1': () => {
+      // Heading 1
+      document.execCommand('formatBlock', false, 'h1')
+    },
+    'cmd+2': () => {
+      // Heading 2
+      document.execCommand('formatBlock', false, 'h2')
+    },
+    'cmd+3': () => {
+      // Heading 3
+      document.execCommand('formatBlock', false, 'h3')
+    },
+    'cmd+shift+l': () => {
+      // Bullet list
+      document.execCommand('insertUnorderedList')
+    },
+    'cmd+shift+o': () => {
+      // Numbered list
+      document.execCommand('insertOrderedList')
+    },
+    'cmd+shift+c': () => {
+      // Code block
+      document.execCommand('formatBlock', false, 'pre')
     }
   }
 

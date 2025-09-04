@@ -254,7 +254,7 @@ const EditorPanel: React.FC = () => {
       </div>
 
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <DialogContent>
+        <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Delete Note</DialogTitle>
             <DialogDescription>

@@ -16,11 +16,6 @@ export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts) => {
         (target.closest && target.closest('.ProseMirror'))
       )
 
-      // Don't trigger shortcuts if user is editing text
-      if (isEditing && !event.metaKey && !event.ctrlKey) {
-        return
-      }
-
       const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
       const modifierKey = isMac ? event.metaKey : event.ctrlKey
 
@@ -32,6 +27,24 @@ export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts) => {
       if (event.altKey) shortcutKey += 'alt+'
       
       shortcutKey += event.key.toLowerCase()
+
+      // Text formatting shortcuts that should only work when editing
+      const textFormattingShortcuts = ['cmd+b', 'cmd+shift+i', 'cmd+u', 'cmd+shift+s', 'cmd+1', 'cmd+2', 'cmd+3', 'cmd+shift+l', 'cmd+shift+o', 'cmd+shift+c']
+      
+      // Navigation and global shortcuts that should work anywhere
+      const globalShortcuts = ['cmd+k', 'cmd+d', 'cmd+s', 'alt+arrowup', 'alt+arrowdown', 'escape']
+      
+      // Don't trigger shortcuts if user is editing text (except for formatting shortcuts when editing, or global shortcuts)
+      if (isEditing) {
+        if (!textFormattingShortcuts.includes(shortcutKey) && !globalShortcuts.includes(shortcutKey)) {
+          return
+        }
+      } else {
+        // When not editing, don't allow text formatting shortcuts
+        if (textFormattingShortcuts.includes(shortcutKey)) {
+          return
+        }
+      }
 
       // Execute shortcut if it exists
       if (shortcuts[shortcutKey]) {
