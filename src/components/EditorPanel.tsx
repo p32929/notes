@@ -93,6 +93,28 @@ const EditorPanel: React.FC = () => {
     }
   }, [deleteDialog, selectedNote])
 
+  // Auto-focus editor when note changes or is created
+  useEffect(() => {
+    if (selectedNote && editor) {
+      // Use setTimeout to ensure the editor is fully rendered
+      setTimeout(() => {
+        try {
+          if (editor.commands && editor.commands.focus) {
+            editor.commands.focus()
+          } else {
+            // Fallback: try to focus the ProseMirror element directly
+            const proseMirrorElement = document.querySelector('.ProseMirror')
+            if (proseMirrorElement) {
+              ;(proseMirrorElement as HTMLElement).focus()
+            }
+          }
+        } catch (error) {
+          console.log('Could not focus editor:', error)
+        }
+      }, 100)
+    }
+  }, [selectedNote?.id, editor]) // Focus when selectedNote ID changes or editor becomes available
+
   if (!selectedNote) {
     return (
       <div className="flex-1 flex flex-col bg-background h-full">
