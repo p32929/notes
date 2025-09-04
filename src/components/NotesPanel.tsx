@@ -101,12 +101,12 @@ const NotesPanel: React.FC = () => {
 
   return (
     <TooltipProvider>
-      <div className="w-80 border-r border-border flex flex-col h-full bg-background">
+      <div className="w-full h-full flex flex-col bg-background">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-lg">9Notes</h2>
-          <div className="flex items-center gap-2">
+          <h2 className="font-semibold text-lg sm:text-xl">9Notes</h2>
+          <div className="flex items-center gap-1 sm:gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
@@ -128,14 +128,15 @@ const NotesPanel: React.FC = () => {
         </div>
         
         <Button 
-          className="w-full mb-4" 
+          className="w-full mb-4 h-10 sm:h-9" 
           onClick={() => {
             const noteId = controller.createNote()
             controller.selectNote(noteId)
           }}
         >
           <Plus className="h-4 w-4 mr-2" />
-          New Note
+          <span className="hidden sm:inline">New Note</span>
+          <span className="sm:hidden">New</span>
         </Button>
 
         <div className="relative">
@@ -161,6 +162,7 @@ const NotesPanel: React.FC = () => {
                   const nextSort = sortOptions[(currentIndex + 1) % sortOptions.length]
                   controller.setStates({ sortBy: nextSort })
                 }}
+                className="p-1.5 sm:p-2"
               >
                 {getSortIcon()}
               </Button>
@@ -179,6 +181,7 @@ const NotesPanel: React.FC = () => {
                     sortOrder: states.sortOrder === 'asc' ? 'desc' : 'asc' 
                   })
                 }}
+                className="p-1.5 sm:p-2"
               >
                 {states.sortOrder === 'asc' ? 
                   <SortAsc className="h-4 w-4" /> : 
@@ -225,8 +228,9 @@ const NotesPanel: React.FC = () => {
               <div
                 key={note.id}
                 className={`
-                  group cursor-pointer transition-colors hover:bg-muted/50 border-b p-4
+                  group cursor-pointer transition-colors hover:bg-muted/50 border-b p-3 sm:p-4
                   ${states.selectedNoteId === note.id ? 'bg-muted border-l-4 border-l-primary' : ''}
+                  active:bg-muted/70
                 `}
                 onClick={() => handleNoteSelect(note.id)}
               >
@@ -245,16 +249,16 @@ const NotesPanel: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 ml-2 opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={(e) => handleDeleteNote(note.id, e)}
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive p-1.5 sm:p-2 touch-manipulation"
                         >
-                          <Trash className="h-4 w-4" />
+                          <Trash className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>

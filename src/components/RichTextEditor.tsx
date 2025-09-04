@@ -36,14 +36,15 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
   return (
     <TooltipProvider>
-      <div className="border-b border-border p-2 flex flex-wrap items-center gap-1">
-        <div className="flex items-center gap-1">
+      <div className="border-b border-border p-1.5 sm:p-2 flex flex-wrap items-center gap-0.5 sm:gap-1 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
                 H1
               </Button>
@@ -56,6 +57,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
                 H2
               </Button>
@@ -68,6 +70,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 text-xs sm:text-sm touch-manipulation"
               >
                 H3
               </Button>
@@ -76,17 +79,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-8" />
+        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant={editor.isActive('bold') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleBold().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Bold className="h-4 w-4" />
+                <Bold className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Bold</TooltipContent>
@@ -97,8 +101,9 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('italic') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleItalic().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Italic className="h-4 w-4" />
+                <Italic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Italic</TooltipContent>
@@ -109,8 +114,9 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('strike') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleStrike().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Strikethrough className="h-4 w-4" />
+                <Strikethrough className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Strikethrough</TooltipContent>
@@ -121,25 +127,27 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('code') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleCode().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Code className="h-4 w-4" />
+                <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Inline code</TooltipContent>
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-8" />
+        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <List className="h-4 w-4" />
+                <List className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Bullet list</TooltipContent>
@@ -150,8 +158,9 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <ListOrdered className="h-4 w-4" />
+                <ListOrdered className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Numbered list</TooltipContent>
@@ -162,25 +171,27 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Quote className="h-4 w-4" />
+                <Quote className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Quote</TooltipContent>
           </Tooltip>
         </div>
 
-        <Separator orientation="vertical" className="h-8" />
+        <Separator orientation="vertical" className="h-6 sm:h-8 mx-1 flex-shrink-0" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                className="h-8 w-8 sm:h-9 sm:w-9 p-1.5 sm:p-2 touch-manipulation"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>Horizontal rule</TooltipContent>
@@ -214,7 +225,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none h-full px-6 py-4',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto focus:outline-none h-full px-3 py-3 sm:px-6 sm:py-4 max-w-none',
       },
     },
   })
