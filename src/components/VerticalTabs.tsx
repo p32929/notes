@@ -103,16 +103,8 @@ const VerticalTabs: React.FC = () => {
 
         {/* Notes Tabs */}
         <div className="flex-1 overflow-y-auto py-2 space-y-1">
-          {states.notes.length === 0 ? (
-            <div className="px-2 py-8 text-center">
-              <div className="w-6 h-6 mx-auto mb-2 rounded bg-muted/50 flex items-center justify-center">
-                <FileText className="h-3 w-3 text-muted-foreground/50" />
-              </div>
-              <p className="text-xs text-muted-foreground/70">No notes</p>
-            </div>
-          ) : (
-            states.notes.map((note, index) => (
-              <div key={note.id} className="relative group px-2">
+          {states.notes.map((note, index) => (
+            <div key={note.id} className="relative group px-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -167,9 +159,8 @@ const VerticalTabs: React.FC = () => {
                     </div>
                   </TooltipContent>
                 </Tooltip>
-              </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
 
         {/* Footer Section */}
