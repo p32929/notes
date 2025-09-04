@@ -196,26 +196,37 @@ const VerticalTabs: React.FC = () => {
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = '.json'
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
         const reader = new FileReader()
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           try {
             const importedNotes = JSON.parse(e.target?.result as string)
             if (Array.isArray(importedNotes)) {
+              // Create all notes in batch to avoid multiple auto-saves
+              const newNotes: any[] = []
+              
               importedNotes.forEach((note: any) => {
                 if (note.title !== undefined && note.content !== undefined) {
                   const noteId = controller.createNote()
                   controller.updateNote(noteId, {
                     title: note.title,
-                    content: note.content
+                    content: note.content,
+                    // Preserve original timestamps if they exist
+                    createdAt: note.createdAt ? new Date(note.createdAt) : undefined,
+                    updatedAt: note.updatedAt ? new Date(note.updatedAt) : undefined
                   })
                 }
               })
+              
+              console.log(`Successfully imported ${importedNotes.length} notes`)
+            } else {
+              console.error('Invalid file format: expected array of notes')
             }
           } catch (error) {
             console.error('Error importing notes:', error)
+            alert('Failed to import notes. Please check the file format.')
           }
         }
         reader.readAsText(file)
@@ -231,10 +242,8 @@ const VerticalTabs: React.FC = () => {
   }
 
   const confirmClearAllNotes = () => {
-    // Delete all notes
-    states.notes.forEach(note => {
-      controller.deleteNote(note.id)
-    })
+    // Clear all notes efficiently - this will trigger a bulk save
+    controller.clearAllNotes()
     setClearAllDialog(false)
   }
 

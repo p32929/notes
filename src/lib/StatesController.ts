@@ -132,6 +132,12 @@ export class Controller {
     }
 
     @action
+    clearAllNotes() {
+        this.states.notes = []
+        this.states.selectedNoteId = null
+    }
+
+    @action
     selectNote(id: string | null) {
         this.states.selectedNoteId = id
     }
