@@ -1,11 +1,12 @@
 import { controller } from "@/lib/StatesController";
 import { useSelector } from "react-redux";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import React from "react";
 import { getData, saveData } from "@/lib/utils";
 import EditorPanel from "@/components/EditorPanel";
 import VerticalTabs from "@/components/VerticalTabs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { SearchDialog } from "@/components/SearchDialog";
 
 function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
   let timeout: NodeJS.Timeout;
@@ -20,6 +21,7 @@ function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number
 function App() {
   const states = useSelector(() => controller.states);
   const debouncedUpdateData = useCallback(() => debounce(saveData, 1000)(), []);
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
 
   useEffect(() => {
     debouncedUpdateData()
@@ -27,6 +29,16 @@ function App() {
 
   useEffect(() => {
     getData()
+  }, [])
+
+  // Listen for custom events from child components
+  useEffect(() => {
+    const handleSearchDialog = () => {
+      setShowSearchDialog(true)
+    }
+
+    window.addEventListener('triggerSearchDialog', handleSearchDialog)
+    return () => window.removeEventListener('triggerSearchDialog', handleSearchDialog)
   }, [])
 
   // Keyboard shortcuts
@@ -47,15 +59,15 @@ function App() {
       // Manual save (though auto-save is already active)
       saveData()
     },
-    'cmd+shift+n': () => {
-      // Create new note (alternative shortcut)
-      const noteId = controller.createNote()
-      controller.selectNote(noteId)
+    'cmd+f': () => {
+      // Open search dialog
+      setShowSearchDialog(true)
     },
     'escape': () => {
-      // Close any open dialogs or menus (can be extended)
-      // For now, just blur any focused element
-      if (document.activeElement instanceof HTMLElement) {
+      // Close any open dialogs or menus
+      if (showSearchDialog) {
+        setShowSearchDialog(false)
+      } else if (document.activeElement instanceof HTMLElement) {
         document.activeElement.blur()
       }
     },
@@ -126,6 +138,12 @@ function App() {
       <div className="flex-1 min-w-0">
         <EditorPanel />
       </div>
+
+      {/* Search Dialog */}
+      <SearchDialog 
+        open={showSearchDialog} 
+        onOpenChange={setShowSearchDialog} 
+      />
     </div>
   );
 }

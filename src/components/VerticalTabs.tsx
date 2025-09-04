@@ -36,7 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical, HelpCircle } from 'lucide-react'
+import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical, HelpCircle, Search } from 'lucide-react'
 import { HelpDialog } from './HelpDialog'
 
 interface SortableNoteProps {
@@ -172,6 +172,12 @@ const VerticalTabs: React.FC = () => {
     controller.selectNote(noteId)
   }
 
+  const handleOpenSearch = () => {
+    // Dispatch custom event to open search dialog
+    const event = new CustomEvent('triggerSearchDialog')
+    window.dispatchEvent(event)
+  }
+
   const handleExportNotes = () => {
     const dataStr = JSON.stringify(states.notes, null, 2)
     const dataBlob = new Blob([dataStr], { type: 'application/json' })
@@ -276,6 +282,17 @@ const VerticalTabs: React.FC = () => {
 
         {/* Footer Section */}
         <div className="p-2 border-t border-border/50 relative space-y-2">
+          <TooltipWithShortcut title="Search Notes" shortcut="cmd+f" side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleOpenSearch}
+              className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+          </TooltipWithShortcut>
+
           <SimpleTooltip title="Help" side="right">
             <Button
               variant="ghost"

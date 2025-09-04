@@ -32,7 +32,7 @@ export const useKeyboardShortcuts = (shortcuts: KeyboardShortcuts) => {
       const textFormattingShortcuts = ['cmd+b', 'cmd+shift+i', 'cmd+u', 'cmd+shift+s', 'cmd+1', 'cmd+2', 'cmd+3', 'cmd+shift+l', 'cmd+shift+o', 'cmd+shift+c']
       
       // Navigation and global shortcuts that should work anywhere
-      const globalShortcuts = ['cmd+k', 'cmd+d', 'cmd+s', 'alt+arrowup', 'alt+arrowdown', 'escape']
+      const globalShortcuts = ['cmd+k', 'cmd+d', 'cmd+s', 'cmd+f', 'alt+arrowup', 'alt+arrowdown', 'escape']
       
       // Don't trigger shortcuts if user is editing text (except for formatting shortcuts when editing, or global shortcuts)
       if (isEditing) {

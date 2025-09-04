@@ -1,7 +1,7 @@
 import React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { getShortcutDisplay } from '../hooks/useKeyboardShortcuts'
-import { Keyboard, Edit3, Trash2, Save, ChevronUp, ChevronDown, X, Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3, List, ListOrdered, Code } from 'lucide-react'
+import { Keyboard, Edit3, Trash2, Save, ChevronUp, ChevronDown, X, Bold, Italic, Underline, Strikethrough, Heading1, Heading2, Heading3, List, ListOrdered, Code, Search } from 'lucide-react'
 
 interface HelpDialogProps {
   open: boolean
@@ -24,6 +24,11 @@ export const HelpDialog: React.FC<HelpDialogProps> = ({ open, onOpenChange }) =>
       key: 'cmd+s',
       description: 'Save current note',
       icon: <Save className="w-4 h-4" />
+    },
+    {
+      key: 'cmd+f',
+      description: 'Open search dialog',
+      icon: <Search className="w-4 h-4" />
     },
     {
       key: 'alt+arrowup',
