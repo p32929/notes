@@ -54,6 +54,22 @@ export class DatabaseStorage {
     }
   }
 
+  // Optimized method to save only one note
+  async saveNote(note: Note): Promise<void> {
+    try {
+      await db.notes.put(note)  // Put updates existing or creates new
+    } catch (error) {
+      console.error('Failed to save note to IndexedDB:', error)
+      // Fallback: save all notes
+      const notes = await this.getNotes()
+      const updatedNotes = notes.map(n => n.id === note.id ? note : n)
+      if (!notes.find(n => n.id === note.id)) {
+        updatedNotes.push(note)
+      }
+      this.saveNotesToLocalStorage(updatedNotes)
+    }
+  }
+
   async getSettings(): Promise<AppSettings | null> {
     try {
       const settings = await db.settings.toArray()
