@@ -61,7 +61,7 @@ const EditorPanel: React.FC = () => {
 
   if (!selectedNote) {
     return (
-      <div className="flex-1 flex flex-col bg-background">
+      <div className="flex-1 flex flex-col bg-background h-full">
         {/* Header */}
         <div className="border-b border-border p-4 bg-background">
           <h1 className="text-xl font-semibold text-center">9Notes</h1>
@@ -91,7 +91,7 @@ const EditorPanel: React.FC = () => {
           </div>
         </div>
         
-        {/* Footer */}
+        {/* Footer - Fixed at bottom */}
         <div className="border-t border-border px-4 py-3 bg-muted/20">
           <div className="text-center text-xs text-muted-foreground">
             Start writing your thoughts and ideas
