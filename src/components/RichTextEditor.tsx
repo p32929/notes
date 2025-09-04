@@ -24,6 +24,7 @@ import {
   Redo
 } from 'lucide-react'
 import React from 'react'
+import { getShortcutDisplay } from '@/hooks/useKeyboardShortcuts'
 
 interface RichTextEditorProps {
   content: string
@@ -52,7 +53,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <span className={editor.isActive('heading', { level: 1 }) ? 'text-white' : ''}>H1</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Heading 1</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Heading 1</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+1')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -65,7 +71,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <span className={editor.isActive('heading', { level: 2 }) ? 'text-white' : ''}>H2</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Heading 2</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Heading 2</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+2')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -78,7 +89,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <span className={editor.isActive('heading', { level: 3 }) ? 'text-white' : ''}>H3</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Heading 3</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Heading 3</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+3')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
         </div>
 
@@ -96,7 +112,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Bold className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('bold') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Bold</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Bold</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+b')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -109,7 +130,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Italic className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('italic') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Italic</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Italic</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+shift+i')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -122,7 +148,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <Strikethrough className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('strike') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Strikethrough</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Strikethrough</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+shift+s')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -153,7 +184,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <List className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('bulletList') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Bullet list</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Bullet list</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+shift+l')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -166,7 +202,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <ListOrdered className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${editor.isActive('orderedList') ? 'text-white' : ''}`} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Numbered list</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Numbered list</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+shift+o')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -197,7 +238,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 <FileCode className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent><span className="font-medium text-white">Code block</span></TooltipContent>
+            <TooltipContent>
+              <div className="flex flex-col">
+                <span className="font-medium text-white">Code block</span>
+                <span className="text-xs text-white/80 mt-1">{getShortcutDisplay('cmd+shift+c')}</span>
+              </div>
+            </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
