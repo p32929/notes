@@ -180,14 +180,14 @@ const VerticalTabs: React.FC = () => {
           </Tooltip>
         </div>
 
-        {/* Full Menu Panel */}
+        {/* Full Menu Panel - Overlay on top of everything */}
         {isMenuOpen && (
           <>
             <div 
-              className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/50 z-50"
               onClick={() => setIsMenuOpen(false)}
             />
-            <div className="fixed left-14 top-0 w-80 h-full bg-background/95 backdrop-blur-md border-r border-border z-50 shadow-xl">
+            <div className="fixed left-0 top-0 w-80 h-full bg-background border-r border-border z-50 shadow-xl">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold text-lg">All Notes</h2>
