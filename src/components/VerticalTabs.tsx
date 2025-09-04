@@ -206,7 +206,7 @@ const VerticalTabs: React.FC = () => {
                       <div className="font-medium">
                         {note.title || `Note ${index + 1}`}
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+                      <div>
                         {note.content ? (
                           (() => {
                             const div = document.createElement('div')
