@@ -428,7 +428,7 @@ const VerticalTabs: React.FC = () => {
 
 
         <Dialog open={clearAllDialog} onOpenChange={setClearAllDialog}>
-          <DialogContent className="w-[60vw] h-[60vh] max-w-none max-h-none overflow-y-auto">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Clear All Notes</DialogTitle>
               <DialogDescription>
