@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, X, Menu, MoreHorizontal, Upload, Download, Trash2 } from 'lucide-react'
+import { Plus, FileText, X, Menu, Settings, Upload, Download, Trash2, Sun, Moon, Monitor } from 'lucide-react'
 
 const VerticalTabs: React.FC = () => {
   const states = useSelector(() => controller.states)
@@ -235,11 +235,11 @@ const VerticalTabs: React.FC = () => {
                 onClick={() => setShowOptionsDialog(true)}
                 className="w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <Settings className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>More options</p>
+              <p>Settings</p>
             </TooltipContent>
           </Tooltip>
 
@@ -323,39 +323,107 @@ const VerticalTabs: React.FC = () => {
         )}
 
         <Dialog open={showOptionsDialog} onOpenChange={setShowOptionsDialog}>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Options</DialogTitle>
+              <DialogTitle>Theme Settings</DialogTitle>
               <DialogDescription>
-                Manage your notes and data
+                Currently using {states.theme || 'system'} theme
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-2">
-              <Button
-                variant="outline"
-                onClick={handleImportNotes}
-                className="w-full justify-start gap-2"
-              >
-                <Upload className="h-4 w-4" />
-                Import Notes
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleExportNotes}
-                className="w-full justify-start gap-2"
-              >
-                <Download className="h-4 w-4" />
-                Export Notes
-              </Button>
-              <div className="h-px bg-border my-2"></div>
-              <Button
-                variant="outline"
-                onClick={handleClearAllNotes}
-                className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
-              >
-                <Trash2 className="h-4 w-4" />
-                Clear All Notes
-              </Button>
+            <div className="space-y-6">
+              {/* Theme Mode */}
+              <div>
+                <h3 className="text-sm font-medium mb-4">Theme Mode</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <Button
+                    variant={states.theme === 'system' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => controller.updateSettings({ theme: 'system' })}
+                    className="flex flex-col items-center gap-2 h-16"
+                  >
+                    <Monitor className="h-5 w-5" />
+                    <span className="text-xs">System</span>
+                  </Button>
+                  <Button
+                    variant={states.theme === 'light' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => controller.updateSettings({ theme: 'light' })}
+                    className="flex flex-col items-center gap-2 h-16"
+                  >
+                    <Sun className="h-5 w-5" />
+                    <span className="text-xs">Light</span>
+                  </Button>
+                  <Button
+                    variant={states.theme === 'dark' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => controller.updateSettings({ theme: 'dark' })}
+                    className="flex flex-col items-center gap-2 h-16"
+                  >
+                    <Moon className="h-5 w-5" />
+                    <span className="text-xs">Dark</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Theme Color */}
+              <div>
+                <h3 className="text-sm font-medium mb-4">Theme Color</h3>
+                <div className="flex gap-2 justify-center">
+                  {[
+                    { name: 'green', color: 'bg-green-500', value: 'green' },
+                    { name: 'blue', color: 'bg-blue-500', value: 'blue' },
+                    { name: 'red', color: 'bg-red-500', value: 'red' },
+                    { name: 'purple', color: 'bg-purple-500', value: 'purple' },
+                    { name: 'orange', color: 'bg-orange-500', value: 'orange' },
+                    { name: 'teal', color: 'bg-teal-500', value: 'teal' },
+                    { name: 'indigo', color: 'bg-indigo-500', value: 'indigo' },
+                    { name: 'pink', color: 'bg-pink-500', value: 'pink' },
+                  ].map((colorOption) => (
+                    <button
+                      key={colorOption.name}
+                      onClick={() => controller.updateSettings({ color: colorOption.value })}
+                      className={`w-9 h-9 rounded-full ${colorOption.color} relative hover:scale-110 transition-transform flex-shrink-0`}
+                    >
+                      {states.color === colorOption.value && (
+                        <div className="absolute inset-0 rounded-full border-2 border-white flex items-center justify-center">
+                          <div className="w-3 h-3 text-white">✓</div>
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Data Management */}
+              <div className="pt-4 border-t border-border">
+                <h3 className="text-sm font-medium mb-3">Data Management</h3>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleImportNotes}
+                    className="w-full justify-start gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Import Notes
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleExportNotes}
+                    className="w-full justify-start gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export Notes
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleClearAllNotes}
+                    className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Clear All Notes
+                  </Button>
+                </div>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

@@ -28,6 +28,8 @@ export interface IStates {
     sortBy: 'updatedAt' | 'createdAt' | 'title'
     sortOrder: 'asc' | 'desc'
     theme: 'light' | 'dark' | 'system'
+    color?: string
+    fontSize?: number
 }
 
 export class Controller {
@@ -43,7 +45,9 @@ export class Controller {
         searchQuery: '',
         sortBy: 'updatedAt',
         sortOrder: 'desc',
-        theme: 'system'
+        theme: 'system',
+        color: 'blue',
+        fontSize: 14
     }
 
     @action
@@ -140,6 +144,19 @@ export class Controller {
     @action
     setTheme(theme: 'light' | 'dark' | 'system') {
         this.states.theme = theme
+    }
+
+    @action
+    updateSettings(settings: { theme?: 'light' | 'dark' | 'system'; color?: string; fontSize?: number }) {
+        if (settings.theme) {
+            this.states.theme = settings.theme
+        }
+        if (settings.color) {
+            this.states.color = settings.color
+        }
+        if (settings.fontSize) {
+            this.states.fontSize = settings.fontSize
+        }
     }
 
 

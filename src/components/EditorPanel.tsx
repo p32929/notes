@@ -35,7 +35,7 @@ const EditorPanel: React.FC = () => {
   const [editor, setEditor] = useState<any>(null)
   const [deleteDialog, setDeleteDialog] = useState(false)
 
-  // Apply current theme
+  // Apply current theme and color
   useEffect(() => {
     if (states.theme === 'dark') {
       document.documentElement.classList.add('dark')
@@ -51,6 +51,13 @@ const EditorPanel: React.FC = () => {
       }
     }
   }, [states.theme])
+
+  // Apply color theme
+  useEffect(() => {
+    if (states.color) {
+      document.documentElement.setAttribute('data-color', states.color)
+    }
+  }, [states.color])
 
   if (!selectedNote) {
     return (
