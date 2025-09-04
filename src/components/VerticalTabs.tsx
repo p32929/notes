@@ -110,7 +110,7 @@ const VerticalTabs: React.FC = () => {
                       size="sm"
                       onClick={() => handleNoteSelect(note.id)}
                       className={`
-                        w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg
+                        relative w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg overflow-hidden
                         ${states.selectedNoteId === note.id 
                           ? 'bg-primary/15 text-primary border-2 border-primary/20 shadow-sm' 
                           : 'hover:bg-muted/50 border-2 border-transparent hover:border-border/30'
@@ -118,10 +118,23 @@ const VerticalTabs: React.FC = () => {
                       `}
                     >
                       <FileText 
-                        className={`h-4 w-4 transition-colors ${
-                          states.selectedNoteId === note.id ? 'text-primary' : ''
+                        className={`h-4 w-4 transition-all duration-300 ${
+                          states.selectedNoteId === note.id 
+                            ? 'text-primary group-hover:scale-75 group-hover:opacity-0' 
+                            : ''
                         }`} 
                       />
+                      
+                      {/* Delete Button - only shows on hover when note is selected */}
+                      {states.selectedNoteId === note.id && (
+                        <X 
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteNote(note.id, e)
+                          }}
+                          className="absolute inset-0 m-auto h-4 w-4 text-destructive opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 cursor-pointer hover:text-destructive/80"
+                        />
+                      )}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -144,16 +157,6 @@ const VerticalTabs: React.FC = () => {
                     </div>
                   </TooltipContent>
                 </Tooltip>
-                
-                {/* Delete Button - appears on hover */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => handleDeleteNote(note.id, e)}
-                  className="absolute -top-1 -right-1 h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-destructive/90 hover:bg-destructive text-destructive-foreground rounded-full shadow-sm"
-                >
-                  <X className="h-2.5 w-2.5" />
-                </Button>
               </div>
             ))
           )}
