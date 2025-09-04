@@ -59,14 +59,14 @@ function App() {
         document.activeElement.blur()
       }
     },
-    'cmd+arrowup': () => {
+    'alt+arrowup': () => {
       // Navigate to previous note
       const currentIndex = states.notes.findIndex(note => note.id === states.selectedNoteId)
       if (currentIndex > 0) {
         controller.selectNote(states.notes[currentIndex - 1].id)
       }
     },
-    'cmd+arrowdown': () => {
+    'alt+arrowdown': () => {
       // Navigate to next note
       const currentIndex = states.notes.findIndex(note => note.id === states.selectedNoteId)
       if (currentIndex < states.notes.length - 1) {
