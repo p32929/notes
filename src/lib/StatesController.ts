@@ -159,6 +159,14 @@ export class Controller {
         }
     }
 
+    @action
+    reorderNotes(startIndex: number, endIndex: number) {
+        const result = Array.from(this.states.notes)
+        const [removed] = result.splice(startIndex, 1)
+        result.splice(endIndex, 0, removed)
+        this.states.notes = result
+    }
+
 
     // Utility methods for filtering
     getFilteredNotes() {

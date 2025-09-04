@@ -3,6 +3,25 @@ import { useSelector } from 'react-redux'
 import { controller } from '@/lib/StatesController'
 import { Button } from '@/components/ui/button'
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import {
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -16,7 +35,87 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, X, Menu, Settings, Upload, Download, Trash2, Sun, Moon, Monitor } from 'lucide-react'
+import { Plus, FileText, X, Menu, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical } from 'lucide-react'
+
+interface SortableNoteProps {
+  note: any
+  index: number
+  isSelected: boolean
+  onSelect: (noteId: string) => void
+}
+
+const SortableNote: React.FC<SortableNoteProps> = ({ note, index, isSelected, onSelect }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: note.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative group px-2">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            {...attributes}
+            {...listeners}
+            variant="ghost"
+            size="sm"
+            onClick={() => onSelect(note.id)}
+            className={`
+              relative w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing
+              ${isSelected 
+                ? 'bg-primary/15 text-primary border-2 border-primary/20 shadow-sm' 
+                : 'hover:bg-muted/50 border-2 border-transparent hover:border-border/30'
+              }
+            `}
+          >
+            {/* Main file icon - scales down on hover to make room for drag icon */}
+            <FileText 
+              className={`h-4 w-4 transition-all duration-300 ${
+                isSelected 
+                  ? 'text-primary group-hover:scale-75 group-hover:opacity-0' 
+                  : 'group-hover:scale-75 group-hover:opacity-0'
+              }`} 
+            />
+            
+            {/* Drag handle - shows on hover, replaces the file icon */}
+            <GripVertical 
+              className="absolute inset-0 m-auto h-4 w-4 text-muted-foreground opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300"
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <div className="max-w-xs">
+            <div className="font-medium">
+              {note.title || `Note ${index + 1}`}
+            </div>
+            <div className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-[200px]">
+              {note.content ? (
+                (() => {
+                  const div = document.createElement('div')
+                  div.innerHTML = note.content
+                  const text = div.textContent || div.innerText || ''
+                  return text.slice(0, 100) + (text.length > 100 ? '...' : '')
+                })()
+              ) : (
+                'Empty note'
+              )}
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  )
+}
 
 const VerticalTabs: React.FC = () => {
   const states = useSelector(() => controller.states)
@@ -28,6 +127,26 @@ const VerticalTabs: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showOptionsDialog, setShowOptionsDialog] = useState(false)
   const [clearAllDialog, setClearAllDialog] = useState(false)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (active.id !== over?.id) {
+      const oldIndex = states.notes.findIndex((note) => note.id === active.id)
+      const newIndex = states.notes.findIndex((note) => note.id === over?.id)
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        controller.reorderNotes(oldIndex, newIndex)
+      }
+    }
+  }
 
   // Add/remove class to hide cursor when menu is open
   React.useEffect(() => {
@@ -165,64 +284,26 @@ const VerticalTabs: React.FC = () => {
 
         {/* Notes Tabs */}
         <div className="flex-1 overflow-y-auto py-2 space-y-1">
-          {states.notes.map((note, index) => (
-            <div key={note.id} className="relative group px-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleNoteSelect(note.id)}
-                      className={`
-                        relative w-full h-10 p-0 flex items-center justify-center transition-all duration-200 rounded-lg overflow-hidden
-                        ${states.selectedNoteId === note.id 
-                          ? 'bg-primary/15 text-primary border-2 border-primary/20 shadow-sm' 
-                          : 'hover:bg-muted/50 border-2 border-transparent hover:border-border/30'
-                        }
-                      `}
-                    >
-                      <FileText 
-                        className={`h-4 w-4 transition-all duration-300 ${
-                          states.selectedNoteId === note.id 
-                            ? 'text-primary group-hover:scale-75 group-hover:opacity-0' 
-                            : ''
-                        }`} 
-                      />
-                      
-                      {/* Delete Button - only shows on hover when note is selected */}
-                      {states.selectedNoteId === note.id && (
-                        <X 
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteNote(note.id, e)
-                          }}
-                          className="absolute inset-0 m-auto h-4 w-4 text-red-500 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 cursor-pointer hover:text-red-600"
-                        />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <div className="max-w-xs">
-                      <div className="font-medium">
-                        {note.title || `Note ${index + 1}`}
-                      </div>
-                      <div>
-                        {note.content ? (
-                          (() => {
-                            const div = document.createElement('div')
-                            div.innerHTML = note.content
-                            const text = div.textContent || div.innerText || ''
-                            return text.slice(0, 100) + (text.length > 100 ? '...' : '')
-                          })()
-                        ) : (
-                          'Empty note'
-                        )}
-                      </div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-            </div>
-          ))}
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
+              items={states.notes.map(note => note.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {states.notes.map((note, index) => (
+                <SortableNote
+                  key={note.id}
+                  note={note}
+                  index={index}
+                  isSelected={states.selectedNoteId === note.id}
+                  onSelect={handleNoteSelect}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         </div>
 
         {/* Footer Section */}
