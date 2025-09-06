@@ -1,0 +1,279 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  /* Color themes */
+  :root[data-color="blue"] {
+    --primary: 221.2 83.2% 53.3%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+
+  :root[data-color="green"] {
+    --primary: 142.1 76.2% 36.3%;
+    --ring: 142.1 76.2% 36.3%;
+  }
+
+  :root[data-color="red"] {
+    --primary: 0 72.2% 50.6%;
+    --ring: 0 72.2% 50.6%;
+  }
+
+  :root[data-color="purple"] {
+    --primary: 262.1 83.3% 57.8%;
+    --ring: 262.1 83.3% 57.8%;
+  }
+
+  :root[data-color="orange"] {
+    --primary: 24.6 95% 53.1%;
+    --ring: 24.6 95% 53.1%;
+  }
+
+  :root[data-color="teal"] {
+    --primary: 173 58% 39%;
+    --ring: 173 58% 39%;
+  }
+
+  :root[data-color="indigo"] {
+    --primary: 239 84% 67%;
+    --ring: 239 84% 67%;
+  }
+
+  :root[data-color="pink"] {
+    --primary: 330 81% 60%;
+    --ring: 330 81% 60%;
+  }
+
+  /* Dark theme color variants - more vibrant for better visibility */
+  .dark[data-color="blue"] {
+    --primary: 213 94% 68%;
+    --ring: 213 94% 68%;
+  }
+
+  .dark[data-color="green"] {
+    --primary: 142 76% 50%;
+    --ring: 142 76% 50%;
+  }
+
+  .dark[data-color="red"] {
+    --primary: 0 84% 65%;
+    --ring: 0 84% 65%;
+  }
+
+  .dark[data-color="purple"] {
+    --primary: 270 91% 75%;
+    --ring: 270 91% 75%;
+  }
+
+  .dark[data-color="orange"] {
+    --primary: 25 95% 63%;
+    --ring: 25 95% 63%;
+  }
+
+  .dark[data-color="teal"] {
+    --primary: 173 80% 50%;
+    --ring: 173 80% 50%;
+  }
+
+  .dark[data-color="indigo"] {
+    --primary: 239 84% 75%;
+    --ring: 239 84% 75%;
+  }
+
+  .dark[data-color="pink"] {
+    --primary: 330 81% 70%;
+    --ring: 330 81% 70%;
+  }
+
+  .dark {
+    /* Modern dark theme with warmer, softer colors */
+    --background: 240 10% 8%;     /* Softer dark background */
+    --foreground: 0 0% 95%;       /* Crisp white text */
+    --card: 240 8% 10%;           /* Slightly lighter cards */
+    --card-foreground: 0 0% 95%;
+    --popover: 240 8% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 240 10% 8%;
+    --secondary: 240 6% 14%;      /* Warmer secondary */
+    --secondary-foreground: 0 0% 90%;
+    --muted: 240 6% 14%;          /* Less harsh muted */
+    --muted-foreground: 240 5% 64%; /* Better contrast */
+    --accent: 240 6% 16%;         /* Subtle accent */
+    --accent-foreground: 0 0% 90%;
+    --destructive: 0 62.8% 50%;   /* Brighter red for better visibility */
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 16%;         /* Softer borders */
+    --input: 240 6% 12%;          /* Dark input backgrounds */
+    --ring: 240 10% 20%;          /* Subtle focus rings */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar styles */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Text truncation for multiple lines */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Touch optimization */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Mobile-friendly scrollbar for toolbar */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer utilities {
+  /* Editor-specific styles */
+  .ProseMirror {
+    @apply focus:outline-none h-full min-h-full;
+  }
+
+  /* Hide cursor and content when menu overlay is active */
+  .menu-overlay-active .ProseMirror {
+    caret-color: transparent;
+    opacity: 0;
+  }
+
+  .ProseMirror p.is-editor-empty:first-child::before {
+    @apply text-muted-foreground;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* Better prose styling for the rich text editor */
+  .prose {
+    @apply text-foreground max-w-none;
+  }
+
+  .prose h1 {
+    @apply text-2xl font-bold text-foreground;
+  }
+
+  .prose h2 {
+    @apply text-xl font-semibold text-foreground;
+  }
+
+  .prose h3 {
+    @apply text-lg font-medium text-foreground;
+  }
+
+  .prose p {
+    @apply text-foreground leading-relaxed;
+  }
+
+  .prose ul, .prose ol {
+    @apply text-foreground;
+    padding-left: 1.5rem;
+  }
+
+  .prose ul li {
+    list-style-type: disc;
+    margin: 0.25rem 0;
+  }
+
+  .prose ol li {
+    list-style-type: decimal;
+    margin: 0.25rem 0;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-primary/20 pl-4 italic text-muted-foreground;
+  }
+
+  .prose code {
+    @apply bg-muted px-1 py-0.5 rounded text-sm font-mono;
+  }
+
+  .prose pre {
+    @apply bg-muted p-4 rounded-lg overflow-x-auto;
+  }
+
+  .prose strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .prose em {
+    @apply italic;
+  }
+}
