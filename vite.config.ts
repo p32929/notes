@@ -21,6 +21,7 @@ export default defineConfig({
   server: {
     port: 4000,
   },
+  base: process.env.NODE_ENV === 'production' ? '/notes/' : '/',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -33,4 +34,18 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'redux', 'react-redux'],
+          tiptap: ['@tiptap/core', '@tiptap/react', '@tiptap/starter-kit'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-tooltip', 'lucide-react']
+        }
+      }
+    }
+  }
 })
