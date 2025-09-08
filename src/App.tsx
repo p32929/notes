@@ -89,39 +89,35 @@ function App() {
     },
     'cmd+b': () => {
       // Bold text
-      document.execCommand('bold')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleBold' } }))
     },
     'cmd+shift+i': () => {
       // Italic text
-      document.execCommand('italic')
-    },
-    'cmd+u': () => {
-      // Underline text
-      document.execCommand('underline')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleItalic' } }))
     },
     'cmd+shift+s': () => {
       // Strikethrough text
-      document.execCommand('strikeThrough')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleStrike' } }))
     },
     'cmd+1': () => {
       // Heading 1
-      document.execCommand('formatBlock', false, 'h1')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleHeading', level: 1 } }))
     },
     'cmd+2': () => {
       // Heading 2
-      document.execCommand('formatBlock', false, 'h2')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleHeading', level: 2 } }))
     },
     'cmd+3': () => {
       // Heading 3
-      document.execCommand('formatBlock', false, 'h3')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleHeading', level: 3 } }))
     },
     'cmd+shift+l': () => {
       // Bullet list
-      document.execCommand('insertUnorderedList')
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleBulletList' } }))
     },
     'cmd+shift+o': () => {
-      // Numbered list
-      document.execCommand('insertOrderedList')
+      // Numbered list  
+      window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleOrderedList' } }))
     },
     'cmd+shift+c': () => {
       // Code block

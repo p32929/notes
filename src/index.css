@@ -244,6 +244,17 @@
 
   .prose ul, .prose ol {
     @apply text-foreground;
+    padding-left: 1.5rem;
+  }
+
+  .prose ul li {
+    list-style-type: disc;
+    margin: 0.25rem 0;
+  }
+
+  .prose ol li {
+    list-style-type: decimal;
+    margin: 0.25rem 0;
   }
 
   .prose blockquote {

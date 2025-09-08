@@ -339,6 +339,41 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   }, [editor, onEditorReady])
 
+  // Listen for keyboard shortcut commands
+  React.useEffect(() => {
+    if (!editor) return
+
+    const handleEditorCommand = (event: CustomEvent) => {
+      const { command, level } = event.detail
+      
+      switch (command) {
+        case 'toggleBold':
+          editor.chain().focus().toggleBold().run()
+          break
+        case 'toggleItalic':
+          editor.chain().focus().toggleItalic().run()
+          break
+        case 'toggleStrike':
+          editor.chain().focus().toggleStrike().run()
+          break
+        case 'toggleHeading':
+          editor.chain().focus().toggleHeading({ level }).run()
+          break
+        case 'toggleBulletList':
+          editor.chain().focus().toggleBulletList().run()
+          break
+        case 'toggleOrderedList':
+          editor.chain().focus().toggleOrderedList().run()
+          break
+        default:
+          break
+      }
+    }
+
+    window.addEventListener('editorCommand', handleEditorCommand as EventListener)
+    return () => window.removeEventListener('editorCommand', handleEditorCommand as EventListener)
+  }, [editor])
+
   if (!editor) return null
 
   return (

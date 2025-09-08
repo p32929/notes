@@ -122,9 +122,7 @@ This will:
 ### ✍️ **Text Formatting**
 - `Cmd/Ctrl + B` - **Bold** text
 - `Cmd/Ctrl + Shift + I` - *Italic* text  
-- `Cmd/Ctrl + U` - <u>Underline</u> text
 - `Cmd/Ctrl + Shift + S` - ~~Strikethrough~~ text
-- `Cmd/Ctrl + E` - `Inline code`
 
 ### 📝 **Document Structure**
 - `Cmd/Ctrl + 1` - # Heading 1
