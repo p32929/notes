@@ -1,8 +1,15 @@
-# 9Notes - Advanced Note-Taking App
+# 9Notes - Offline-First Note-Taking App
 
-A modern, feature-rich note-taking application built with React, TypeScript, and Tailwind CSS.
+A modern, **offline-first** note-taking application that works entirely in your browser. No internet required, no accounts needed, no data leaves your device. Built with React, TypeScript, and Tailwind CSS.
 
 ## 🌟 Features
+
+### 🌐 **Offline-First Design**
+- **100% Offline** - Works without internet connection
+- **No Sign-up Required** - Start using immediately
+- **Privacy-Focused** - All data stays on your device
+- **Fast & Reliable** - IndexedDB for instant performance
+- **Cross-Device** - Works on any modern browser
 
 ### ✨ **Core Functionality**
 - **Rich Text Editor** with TipTap/ProseMirror
@@ -56,17 +63,20 @@ Lightning-fast fuzzy search that finds notes by title or content. Smart matching
 ## 📖 Quick Start Guide
 
 ### **Getting Started**
-1. **Create your first note**: Click the `+` button or press `Cmd/Ctrl + K`
-2. **Start writing**: The editor auto-focuses, just start typing
-3. **Format text**: Use the toolbar or keyboard shortcuts for formatting
-4. **Auto-save**: Your notes save automatically as you type (1-second delay)
+1. **Open the app**: No installation needed - works in any modern browser
+2. **Start offline**: Works immediately, no internet connection required
+3. **Create your first note**: Click the `+` button or press `Cmd/Ctrl + K`
+4. **Start writing**: The editor auto-focuses, just start typing
+5. **Auto-save**: Your notes save automatically to your device (1-second delay)
 
 ### **Power User Tips**
+- **Works anywhere**: Perfect for flights, trains, or anywhere without internet
 - **Search everything**: Press `Cmd/Ctrl + F` and use fuzzy search to find any note
 - **Quick navigation**: Use `Option/Alt + ↑/↓` to move between notes without clicking  
 - **Organize**: Drag and drop notes in the sidebar to reorder them
 - **Themes**: Click the settings icon to change themes and colors
 - **Import/Export**: Backup your notes or migrate from other apps via JSON
+- **Data portability**: Your notes are stored locally - export anytime
 
 ### **Efficient Workflow**
 1. `Cmd/Ctrl + K` → Create note
