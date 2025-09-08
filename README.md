@@ -45,7 +45,7 @@ Lightning-fast fuzzy search that finds notes by title or content. Smart matching
 ### **Getting Started**
 1. Visit https://p32929.github.io/notes/ in any browser
 2. Works offline after first visit - perfect for flights, travel
-3. Optional: "Add to Home Screen" for app-like experience
+3. Install: Look for browser install prompt, or go to Settings → "Install App"
 4. Press `Cmd/Ctrl + K` to create your first note
 
 ### **Key Shortcuts**

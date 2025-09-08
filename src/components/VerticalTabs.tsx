@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { controller } from '@/lib/StatesController'
 import { Button } from '@/components/ui/button'
+import { usePWAInstall } from '@/hooks/usePWAInstall'
 import {
   DndContext,
   closestCenter,
@@ -36,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical, HelpCircle, Search } from 'lucide-react'
+import { Plus, FileText, Settings, Upload, Download, Trash2, Sun, Moon, Monitor, GripVertical, HelpCircle, Search, CheckCircle, Github, ExternalLink } from 'lucide-react'
 import { HelpDialog } from './HelpDialog'
 
 interface SortableNoteProps {
@@ -136,6 +137,7 @@ const VerticalTabs: React.FC = () => {
   const [showOptionsDialog, setShowOptionsDialog] = useState(false)
   const [clearAllDialog, setClearAllDialog] = useState(false)
   const [showHelpDialog, setShowHelpDialog] = useState(false)
+  const { isInstallable, isInstalled, installApp } = usePWAInstall()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -405,6 +407,21 @@ const VerticalTabs: React.FC = () => {
               <div className="pt-4 border-t border-border">
                 <h3 className="text-sm font-medium mb-3">Data Management</h3>
                 <div className="space-y-2">
+                  {isInstallable && (
+                    <Button
+                      onClick={installApp}
+                      className="w-full justify-start gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Install App
+                    </Button>
+                  )}
+                  {isInstalled && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground p-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      App installed
+                    </div>
+                  )}
                   <Button
                     variant="outline"
                     onClick={handleImportNotes}
@@ -430,6 +447,20 @@ const VerticalTabs: React.FC = () => {
                     Clear All Notes
                   </Button>
                 </div>
+              </div>
+
+              {/* About */}
+              <div className="pt-4 border-t border-border">
+                <h3 className="text-sm font-medium mb-3">About</h3>
+                <Button
+                  variant="outline"
+                  onClick={() => window.open('https://github.com/p32929/notes', '_blank')}
+                  className="w-full justify-start gap-2"
+                >
+                  <Github className="h-4 w-4" />
+                  View on GitHub
+                  <ExternalLink className="h-3 w-3 ml-auto" />
+                </Button>
               </div>
             </div>
           </DialogContent>
