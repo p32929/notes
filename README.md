@@ -4,40 +4,20 @@ A modern, **offline-first** note-taking application that works entirely in your 
 
 ## 🌟 Features
 
-### 🌐 **Offline-First Design**
-- **100% Offline** - Works without internet connection
-- **No Sign-up Required** - Start using immediately
-- **Privacy-Focused** - All data stays on your device
-- **Fast & Reliable** - IndexedDB for instant performance
-- **Cross-Device** - Works on any modern browser
+### 🌐 **Offline-First PWA**
+- Works completely offline after first visit
+- Installable on mobile/desktop (Add to Home Screen)
+- No accounts, no sign-up, privacy-focused
+- IndexedDB storage with auto-save
 
-### ✨ **Core Functionality**
-- **Rich Text Editor** with TipTap/ProseMirror
-- **Smart Auto-Save** with optimized IndexedDB storage
-- **Real-time Fuzzy Search** through note titles and content
-- **Drag & Drop** note reordering for organization
-- **Import/Export** notes as JSON files
-- **Cross-Platform** keyboard shortcuts (Mac/Windows/Linux)
-
-### 🎨 **Customization**
-- **Multiple Themes**: Light, Dark, System auto-switching
-- **8 Color Schemes**: Blue, Green, Red, Purple, Orange, Teal, Indigo, Pink
-- **Responsive Design** optimized for mobile and desktop
-- **Modern UI** with smooth animations and transitions
-
-### 💾 **Advanced Storage**
-- **IndexedDB Database** for offline support and performance
-- **Automatic Migration** from localStorage
-- **Smart Change Detection** - only saves what changed
-- **Bulk Operations** support for import/export
-- **Data Persistence** across browser sessions
-
-### ⌨️ **Power User Features**
-- **50+ Keyboard Shortcuts** for everything
-- **Text Formatting Shortcuts** (Bold, Italic, Headers, Lists)
-- **Navigation Shortcuts** between notes
-- **Quick Actions** (Create, Delete, Search)
-- **Tooltip Hints** showing shortcuts on hover
+### ✨ **Key Features**
+- Rich text editor with formatting toolbar
+- Real-time fuzzy search through all notes
+- Drag & drop note reordering  
+- 50+ keyboard shortcuts with cross-platform support
+- Multiple themes (Light/Dark) with 8 color schemes
+- Import/Export notes as JSON
+- Responsive design for mobile & desktop
 
 ## 🚀 Live Demo
 
@@ -63,27 +43,17 @@ Lightning-fast fuzzy search that finds notes by title or content. Smart matching
 ## 📖 Quick Start Guide
 
 ### **Getting Started**
-1. **Open the app**: No installation needed - works in any modern browser
-2. **Start offline**: Works immediately, no internet connection required
-3. **Create your first note**: Click the `+` button or press `Cmd/Ctrl + K`
-4. **Start writing**: The editor auto-focuses, just start typing
-5. **Auto-save**: Your notes save automatically to your device (1-second delay)
+1. Visit https://p32929.github.io/notes/ in any browser
+2. Works offline after first visit - perfect for flights, travel
+3. Optional: "Add to Home Screen" for app-like experience
+4. Press `Cmd/Ctrl + K` to create your first note
 
-### **Power User Tips**
-- **Works anywhere**: Perfect for flights, trains, or anywhere without internet
-- **Search everything**: Press `Cmd/Ctrl + F` and use fuzzy search to find any note
-- **Quick navigation**: Use `Option/Alt + ↑/↓` to move between notes without clicking  
-- **Organize**: Drag and drop notes in the sidebar to reorder them
-- **Themes**: Click the settings icon to change themes and colors
-- **Import/Export**: Backup your notes or migrate from other apps via JSON
-- **Data portability**: Your notes are stored locally - export anytime
-
-### **Efficient Workflow**
-1. `Cmd/Ctrl + K` → Create note
-2. Type your content with rich formatting shortcuts
-3. `Cmd/Ctrl + F` → Search when you need to find something  
-4. `Option/Alt + ↑/↓` → Navigate between notes
-5. `Cmd/Ctrl + D` → Delete when needed
+### **Key Shortcuts**
+- `Cmd/Ctrl + K` - New note
+- `Cmd/Ctrl + F` - Search notes
+- `Cmd/Ctrl + B` - Bold text
+- `Option/Alt + ↑/↓` - Navigate notes
+- `Cmd/Ctrl + 1/2/3` - Headers
 
 ## 🛠 Development
 
@@ -127,9 +97,10 @@ npm run deploy
 ```
 
 This will:
-1. Build the app for production with correct base path
-2. Push the built files to the `gh-pages` branch
-3. GitHub Pages will automatically serve from that branch
+1. Build the app for production with PWA support (service worker, manifest)
+2. Generate offline-capable assets with correct base path
+3. Push the built files to the `gh-pages` branch
+4. GitHub Pages will automatically serve the PWA from that branch
 
 ### Manual Deployment Steps
 
