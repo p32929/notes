@@ -5,8 +5,11 @@ import React from "react";
 import { getData, saveData } from "@/lib/utils";
 import EditorPanel from "@/components/EditorPanel";
 import VerticalTabs from "@/components/VerticalTabs";
+import SplitView, { SplitViewToggle } from "@/components/SplitView";
+import OutlinePanel from "@/components/OutlinePanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { SearchDialog } from "@/components/SearchDialog";
+import { cn } from "@/lib/utils";
 
 function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
   let timeout: NodeJS.Timeout;
@@ -24,6 +27,7 @@ function App() {
     saveData().catch(error => console.error('Auto-save failed:', error))
   }, 1000)(), []);
   const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [showOutline, setShowOutline] = useState(false);
 
   useEffect(() => {
     debouncedUpdateData()
@@ -64,6 +68,14 @@ function App() {
     'cmd+f': () => {
       // Open search dialog
       setShowSearchDialog(true)
+    },
+    'cmd+\\': () => {
+      // Toggle Split View
+      controller.toggleSplitView()
+    },
+    'cmd+shift+o': () => {
+      // Toggle Outline Panel
+      setShowOutline(prev => !prev)
     },
     'escape': () => {
       // Close any open dialogs or menus
@@ -115,7 +127,7 @@ function App() {
       // Bullet list
       window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleBulletList' } }))
     },
-    'cmd+shift+o': () => {
+    'cmd+shift+n': () => {
       // Numbered list  
       window.dispatchEvent(new CustomEvent('editorCommand', { detail: { command: 'toggleOrderedList' } }))
     },
@@ -132,15 +144,58 @@ function App() {
       {/* Vertical Tabs Sidebar */}
       <VerticalTabs />
 
-      {/* Editor Panel */}
-      <div className="flex-1 min-w-0">
-        <EditorPanel />
+      {/* Main Content Area */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Top Bar with Split View Toggle */}
+        <div className="h-10 border-b border-border flex items-center justify-between px-3 bg-muted/20 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              {states.isSplitView ? 'Split View' : 'Single View'}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            {/* Outline Toggle */}
+            <button
+              onClick={() => setShowOutline(!showOutline)}
+              className={cn(
+                "h-8 px-2 text-xs font-medium rounded-md transition-colors",
+                showOutline
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-accent text-muted-foreground"
+              )}
+            >
+              Outline
+            </button>
+            {/* Split View Toggle */}
+            <SplitViewToggle />
+          </div>
+        </div>
+
+        {/* Editor Area */}
+        <div className="flex-1 min-w-0 flex overflow-hidden">
+          {/* Outline Panel (可选) */}
+          {showOutline && (
+            <OutlinePanel
+              noteId={states.selectedNoteId}
+              className="w-56 flex-shrink-0"
+            />
+          )}
+
+          {/* Editor Content */}
+          <div className="flex-1 min-w-0">
+            {states.isSplitView ? (
+              <SplitView />
+            ) : (
+              <EditorPanel />
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Search Dialog */}
-      <SearchDialog 
-        open={showSearchDialog} 
-        onOpenChange={setShowSearchDialog} 
+      <SearchDialog
+        open={showSearchDialog}
+        onOpenChange={setShowSearchDialog}
       />
     </div>
   );
