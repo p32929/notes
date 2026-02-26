@@ -1,4 +1,5 @@
 import Dexie, { Table } from 'dexie'
+import { ISplitPane } from './StatesController'
 
 export interface Note {
   id: string
@@ -13,6 +14,9 @@ export interface AppSettings {
   theme: 'light' | 'dark' | 'system'
   color: string
   selectedNoteId: string | null
+  isSplitView?: boolean
+  splitLayout?: ISplitPane | null
+  activePaneId?: string | null
 }
 
 export class NotesDatabase extends Dexie {
@@ -24,6 +28,16 @@ export class NotesDatabase extends Dexie {
     this.version(1).stores({
       notes: 'id, title, content, createdAt, updatedAt',
       settings: '++id, theme, color, selectedNoteId'
+    })
+    this.version(2).stores({
+      notes: 'id, title, content, createdAt, updatedAt',
+      settings: '++id, theme, color, selectedNoteId, isSplitView, splitLayout, activePaneId'
+    }).upgrade(tx => {
+      tx.table('settings').toCollection().modify(settings => {
+        settings.isSplitView = false
+        settings.splitLayout = null
+        settings.activePaneId = null
+      })
     })
   }
 }
@@ -151,12 +165,19 @@ export class DatabaseStorage {
       const theme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' || 'system'
       const color = localStorage.getItem('color') || 'blue'
       const selectedNoteId = localStorage.getItem('selectedNoteId') || null
+      const isSplitView = localStorage.getItem('isSplitView') === 'true'
+      const splitLayoutStr = localStorage.getItem('splitLayout')
+      const splitLayout = splitLayoutStr ? JSON.parse(splitLayoutStr) : null
+      const activePaneId = localStorage.getItem('activePaneId') || null
       
       return {
         id: 1,
         theme,
         color,
-        selectedNoteId
+        selectedNoteId,
+        isSplitView,
+        splitLayout,
+        activePaneId
       }
     } catch (error) {
       console.error('Failed to get settings from localStorage:', error)
@@ -172,6 +193,17 @@ export class DatabaseStorage {
         localStorage.setItem('selectedNoteId', settings.selectedNoteId)
       } else {
         localStorage.removeItem('selectedNoteId')
+      }
+      localStorage.setItem('isSplitView', String(settings.isSplitView || false))
+      if (settings.splitLayout) {
+        localStorage.setItem('splitLayout', JSON.stringify(settings.splitLayout))
+      } else {
+        localStorage.removeItem('splitLayout')
+      }
+      if (settings.activePaneId) {
+        localStorage.setItem('activePaneId', settings.activePaneId)
+      } else {
+        localStorage.removeItem('activePaneId')
       }
     } catch (error) {
       console.error('Failed to save settings to localStorage:', error)

@@ -18,10 +18,24 @@ export interface INote {
     updatedAt: number
 }
 
+export interface IHeading {
+    id: string
+    level: number
+    text: string
+    offset: number
+}
+
+export interface ISplitPane {
+    id: string
+    noteId: string | null
+    children?: ISplitPane[]
+    direction?: 'horizontal' | 'vertical'
+    size?: number
+}
+
 export interface IStates {
     selectedTab: number
     tabs: string[]
-    // Enhanced state structure
     notes: INote[]
     selectedNoteId: string | null
     searchQuery: string
@@ -30,16 +44,16 @@ export interface IStates {
     theme: 'light' | 'dark' | 'system'
     color?: string
     fontSize?: number
+    isSplitView: boolean
+    splitLayout: ISplitPane | null
+    activePaneId: string | null
 }
 
 export class Controller {
     @state
     states: IStates = {
-        // Legacy support
         selectedTab: 0,
         tabs: [""],
-        
-        // Enhanced state
         notes: [],
         selectedNoteId: null,
         searchQuery: '',
@@ -47,7 +61,10 @@ export class Controller {
         sortOrder: 'desc',
         theme: 'system',
         color: 'blue',
-        fontSize: 14
+        fontSize: 14,
+        isSplitView: false,
+        splitLayout: null,
+        activePaneId: null
     }
 
     @action
@@ -173,8 +190,128 @@ export class Controller {
         this.states.notes = result
     }
 
+    @action
+    toggleSplitView() {
+        this.states.isSplitView = !this.states.isSplitView
+        if (this.states.isSplitView && !this.states.splitLayout) {
+            const paneId = `pane_${Date.now()}`
+            this.states.splitLayout = {
+                id: paneId,
+                noteId: this.states.selectedNoteId,
+                direction: 'horizontal',
+                children: [
+                    { id: `${paneId}_left`, noteId: this.states.selectedNoteId, size: 50 },
+                    { id: `${paneId}_right`, noteId: null, size: 50 }
+                ]
+            }
+            this.states.activePaneId = `${paneId}_left`
+        }
+    }
 
-    // Utility methods for filtering
+    @action
+    setSplitLayout(layout: ISplitPane | null) {
+        this.states.splitLayout = layout
+    }
+
+    @action
+    setActivePane(paneId: string | null) {
+        this.states.activePaneId = paneId
+    }
+
+    @action
+    updatePaneNoteId(paneId: string, noteId: string | null) {
+        if (!this.states.splitLayout) return
+        const updatePane = (pane: ISplitPane): ISplitPane => {
+            if (pane.id === paneId) {
+                return { ...pane, noteId }
+            }
+            if (pane.children) {
+                return { ...pane, children: pane.children.map(updatePane) }
+            }
+            return pane
+        }
+        this.states.splitLayout = updatePane(this.states.splitLayout)
+    }
+
+    @action
+    splitPane(paneId: string, direction: 'horizontal' | 'vertical' = 'horizontal') {
+        if (!this.states.splitLayout) return
+        const newPaneId = `pane_${Date.now()}`
+        const newPane: ISplitPane = {
+            id: newPaneId,
+            noteId: null,
+            size: 50
+        }
+        const updatePane = (pane: ISplitPane): ISplitPane => {
+            if (pane.id === paneId) {
+                const existingSize = pane.size || 50
+                return {
+                    ...pane,
+                    direction,
+                    children: [
+                        { ...pane, size: existingSize / 2 },
+                        { ...newPane, size: existingSize / 2 }
+                    ]
+                }
+            }
+            if (pane.children) {
+                return { ...pane, children: pane.children.map(updatePane) }
+            }
+            return pane
+        }
+        this.states.splitLayout = updatePane(this.states.splitLayout)
+    }
+
+    @action
+    closePane(paneId: string) {
+        if (!this.states.splitLayout) return
+        const removePane = (pane: ISplitPane): ISplitPane | null => {
+            if (pane.children) {
+                const newChildren = pane.children
+                    .map(child => removePane(child))
+                    .filter((child): child is ISplitPane => child !== null)
+                if (newChildren.length === 1) {
+                    return { ...newChildren[0], size: pane.size }
+                }
+                return { ...pane, children: newChildren }
+            }
+            if (pane.id === paneId) {
+                return null
+            }
+            return pane
+        }
+        const newLayout = removePane(this.states.splitLayout)
+        if (newLayout) {
+            this.states.splitLayout = newLayout
+        } else {
+            this.states.isSplitView = false
+            this.states.splitLayout = null
+        }
+    }
+
+    @action
+    swapPanes(paneId1: string, paneId2: string) {
+        if (!this.states.splitLayout) return
+        
+        const swapInPane = (pane: ISplitPane): ISplitPane => {
+            if (pane.children) {
+                const index1 = pane.children.findIndex(child => child.id === paneId1)
+                const index2 = pane.children.findIndex(child => child.id === paneId2)
+                
+                if (index1 !== -1 && index2 !== -1) {
+                    const newChildren = [...pane.children]
+                    const temp = newChildren[index1]
+                    newChildren[index1] = newChildren[index2]
+                    newChildren[index2] = temp
+                    return { ...pane, children: newChildren }
+                }
+                return { ...pane, children: pane.children.map(swapInPane) }
+            }
+            return pane
+        }
+        this.states.splitLayout = swapInPane(this.states.splitLayout)
+    }
+
     getFilteredNotes() {
         let notes = [...this.states.notes]
 
