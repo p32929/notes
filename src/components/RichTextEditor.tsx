@@ -2,6 +2,8 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import CharacterCount from '@tiptap/extension-character-count'
+import CustomHeading from '@/extensions/CustomHeading'
+import OutlineNav from '@/components/OutlineNav'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -32,6 +34,7 @@ interface RichTextEditorProps {
   placeholder?: string
   className?: string
   onEditorReady?: (editor: any) => void
+  showOutline?: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -302,11 +305,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange, 
   placeholder = "Start writing...",
   className = "",
-  onEditorReady
+  onEditorReady,
+  showOutline = true
 }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: false,
+      }),
+      CustomHeading,
       Placeholder.configure({
         placeholder,
       }),
@@ -377,11 +384,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   if (!editor) return null
 
   return (
-    <div className={`border border-border rounded-lg bg-background flex flex-col ${className}`}>
-      <MenuBar editor={editor} />
-      <div className="relative flex-1 cursor-text min-h-0" onClick={() => editor?.commands.focus()}>
-        <EditorContent editor={editor} className="h-full" />
+    <div className={`border border-border rounded-lg bg-background flex ${className}`}>
+      <div className="flex flex-col flex-1 min-w-0">
+        <MenuBar editor={editor} />
+        <div className="relative flex-1 cursor-text min-h-0" onClick={() => editor?.commands.focus()}>
+          <EditorContent editor={editor} className="h-full" />
+        </div>
       </div>
+      {showOutline && <OutlineNav editor={editor} className="w-48 flex-shrink-0" />}
     </div>
   )
 }
