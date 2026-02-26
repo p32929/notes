@@ -7,6 +7,10 @@ import EditorPanel from "@/components/EditorPanel";
 import VerticalTabs from "@/components/VerticalTabs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { SearchDialog } from "@/components/SearchDialog";
+import SplitViewContainer from "@/components/SplitViewContainer";
+import NoteSelectDialog from "@/components/NoteSelectDialog";
+import { Button } from "@/components/ui/button";
+import { Columns, PanelLeft } from "lucide-react";
 
 function debounce<T extends (...args: unknown[]) => void>(func: T, delay: number): T {
   let timeout: NodeJS.Timeout;
@@ -24,6 +28,8 @@ function App() {
     saveData().catch(error => console.error('Auto-save failed:', error))
   }, 1000)(), []);
   const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [showNoteSelectDialog, setShowNoteSelectDialog] = useState(false);
+  const [targetPaneId, setTargetPaneId] = useState<string | null>(null);
 
   useEffect(() => {
     debouncedUpdateData()
@@ -127,20 +133,65 @@ function App() {
 
   useKeyboardShortcuts(shortcuts)
 
+  useEffect(() => {
+    const handlePaneNoteSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<{ paneId: string }>
+      setTargetPaneId(customEvent.detail.paneId)
+      setShowNoteSelectDialog(true)
+    }
+
+    window.addEventListener('triggerPaneNoteSelect', handlePaneNoteSelect)
+    return () => window.removeEventListener('triggerPaneNoteSelect', handlePaneNoteSelect)
+  }, [])
+
+  const handleNoteSelectForPane = (noteId: string) => {
+    if (targetPaneId) {
+      controller.openNoteInPane(targetPaneId, noteId)
+    }
+    setShowNoteSelectDialog(false)
+    setTargetPaneId(null)
+  }
+
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden relative">
       {/* Vertical Tabs Sidebar */}
       <VerticalTabs />
 
-      {/* Editor Panel */}
-      <div className="flex-1 min-w-0">
-        <EditorPanel />
+      {/* Editor Panel or Split View */}
+      <div className="flex-1 min-w-0 flex flex-col relative">
+        {/* Split View Toggle Button */}
+        <div className="absolute top-2 right-4 z-50">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => controller.toggleSplitView()}
+            className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm border border-border shadow-sm"
+            title={states.splitViewEnabled ? "Exit Split View" : "Enter Split View"}
+          >
+            {states.splitViewEnabled ? (
+              <PanelLeft className="h-4 w-4" />
+            ) : (
+              <Columns className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
+        {states.splitViewEnabled && states.splitLayout ? (
+          <SplitViewContainer layout={states.splitLayout} />
+        ) : (
+          <EditorPanel />
+        )}
       </div>
 
-      {/* Search Dialog */}
+      {/* Dialogs */}
       <SearchDialog 
         open={showSearchDialog} 
         onOpenChange={setShowSearchDialog} 
+      />
+      <NoteSelectDialog
+        open={showNoteSelectDialog}
+        onOpenChange={setShowNoteSelectDialog}
+        onSelect={handleNoteSelectForPane}
       />
     </div>
   );
