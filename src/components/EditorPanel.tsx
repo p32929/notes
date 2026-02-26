@@ -18,12 +18,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import RichTextEditor from './RichTextEditor'
+import SplitViewPanel from './SplitViewPanel'
+import OutlineNavigation from './OutlineNavigation'
 import { 
   Trash, 
   Edit3,
-  Calendar,
-  Clock,
-  FileText
+  FileText,
+  Columns,
+  LayoutGrid,
+  PanelLeftClose
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 import { TooltipWithShortcut } from '@/components/ui/tooltip-with-shortcut'
@@ -36,15 +39,14 @@ const EditorPanel: React.FC = () => {
   const [titleValue, setTitleValue] = useState('')
   const [editor, setEditor] = useState<any>(null)
   const [deleteDialog, setDeleteDialog] = useState(false)
+  const [showOutline, setShowOutline] = useState(false)
 
-  // Apply current theme and color
   useEffect(() => {
     if (states.theme === 'dark') {
       document.documentElement.classList.add('dark')
     } else if (states.theme === 'light') {
       document.documentElement.classList.remove('dark')
     } else {
-      // System theme
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       if (mediaQuery.matches) {
         document.documentElement.classList.add('dark')
@@ -54,14 +56,12 @@ const EditorPanel: React.FC = () => {
     }
   }, [states.theme])
 
-  // Apply color theme
   useEffect(() => {
     if (states.color) {
       document.documentElement.setAttribute('data-color', states.color)
     }
   }, [states.color])
 
-  // Listen for keyboard shortcut delete trigger
   useEffect(() => {
     const handleDeleteTrigger = () => {
       if (selectedNote) {
@@ -73,7 +73,6 @@ const EditorPanel: React.FC = () => {
     return () => window.removeEventListener('triggerDeleteDialog', handleDeleteTrigger)
   }, [selectedNote])
 
-  // Handle keyboard navigation in delete dialog
   useEffect(() => {
     const handleDialogKeyboard = (e: KeyboardEvent) => {
       if (deleteDialog) {
@@ -93,16 +92,13 @@ const EditorPanel: React.FC = () => {
     }
   }, [deleteDialog, selectedNote])
 
-  // Auto-focus editor when note changes or is created
   useEffect(() => {
     if (selectedNote && editor) {
-      // Use setTimeout to ensure the editor is fully rendered
       setTimeout(() => {
         try {
           if (editor.commands && editor.commands.focus) {
             editor.commands.focus()
           } else {
-            // Fallback: try to focus the ProseMirror element directly
             const proseMirrorElement = document.querySelector('.ProseMirror')
             if (proseMirrorElement) {
               ;(proseMirrorElement as HTMLElement).focus()
@@ -113,17 +109,23 @@ const EditorPanel: React.FC = () => {
         }
       }, 100)
     }
-  }, [selectedNote?.id, editor]) // Focus when selectedNote ID changes or editor becomes available
+  }, [selectedNote?.id, editor])
+
+  if (states.isSplitView) {
+    return (
+      <div className="h-screen flex flex-col bg-background">
+        <SplitViewPanel className="flex-1" />
+      </div>
+    )
+  }
 
   if (!selectedNote) {
     return (
       <div className="flex-1 flex flex-col bg-background h-full">
-        {/* Header */}
         <div className="border-b border-border p-4 bg-background">
           <h1 className="text-xl font-semibold text-center">9Notes</h1>
         </div>
         
-        {/* Welcome Content */}
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center max-w-md mx-auto">
             <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
@@ -150,7 +152,6 @@ const EditorPanel: React.FC = () => {
           </div>
         </div>
         
-        {/* Footer - Fixed at bottom */}
         <div className="border-t border-border px-4 py-3 bg-muted/20">
           <div className="text-center text-xs text-muted-foreground">
             Start writing your thoughts and ideas
@@ -185,7 +186,6 @@ const EditorPanel: React.FC = () => {
     setDeleteDialog(false)
   }
 
-  // Helper function to extract text content from HTML
   const getTextContent = (htmlContent: string): string => {
     if (!htmlContent) return ''
     const div = document.createElement('div')
@@ -196,83 +196,115 @@ const EditorPanel: React.FC = () => {
   return (
     <TooltipProvider>
       <div className="h-screen flex flex-col bg-background">
-      {/* Header - Compact */}
-      <div className="border-b border-border p-2 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex-1 mr-4">
-            {isEditingTitle ? (
-              <Input
-                value={titleValue}
-                onChange={(e) => setTitleValue(e.target.value)}
-                onBlur={handleTitleSave}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleTitleSave()
-                  if (e.key === 'Escape') {
-                    setIsEditingTitle(false)
-                    setTitleValue('')
-                  }
-                }}
-                className="text-base font-semibold border-0 px-0 focus-visible:ring-0"
-                autoFocus
-              />
-            ) : (
-              <div 
-                className="flex items-center group cursor-pointer"
-                onClick={handleTitleEdit}
-              >
-                <h1 className="text-base font-semibold hover:text-muted-foreground transition-colors truncate">
-                  {selectedNote.title || 'Untitled Note'}
-                </h1>
-                <Edit3 className="h-3 w-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
+        <div className="border-b border-border p-2 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex-1 mr-4">
+              {isEditingTitle ? (
+                <Input
+                  value={titleValue}
+                  onChange={(e) => setTitleValue(e.target.value)}
+                  onBlur={handleTitleSave}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleTitleSave()
+                    if (e.key === 'Escape') {
+                      setIsEditingTitle(false)
+                      setTitleValue('')
+                    }
+                  }}
+                  className="text-base font-semibold border-0 px-0 focus-visible:ring-0"
+                  autoFocus
+                />
+              ) : (
+                <div 
+                  className="flex items-center group cursor-pointer"
+                  onClick={handleTitleEdit}
+                >
+                  <h1 className="text-base font-semibold hover:text-muted-foreground transition-colors truncate">
+                    {selectedNote.title || 'Untitled Note'}
+                  </h1>
+                  <Edit3 className="h-3 w-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
+                </div>
+              )}
+              
+              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                <span>Updated {formatDistanceToNow(selectedNote.updatedAt, { addSuffix: true })}</span>
+                <span>Created {format(selectedNote.createdAt, 'MMM d, yyyy')}</span>
               </div>
-            )}
-            
-            {/* Compact metadata */}
-            <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-              <span>Updated {formatDistanceToNow(selectedNote.updatedAt, { addSuffix: true })}</span>
-              <span>Created {format(selectedNote.createdAt, 'MMM d, yyyy')}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => controller.toggleSplitView()}
+                    className="p-1.5 touch-manipulation"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Split View</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowOutline(!showOutline)}
+                    className="p-1.5 touch-manipulation"
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Toggle outline</TooltipContent>
+              </Tooltip>
+              <TooltipWithShortcut title="Delete note" shortcut="cmd+d">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  className="text-red-500 hover:text-red-600 p-1.5 touch-manipulation"
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </TooltipWithShortcut>
             </div>
           </div>
+        </div>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-1">
-            <TooltipWithShortcut title="Delete note" shortcut="cmd+d">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDelete}
-                className="text-red-500 hover:text-red-600 p-1.5 touch-manipulation"
-              >
-                <Trash className="h-4 w-4" />
-              </Button>
-            </TooltipWithShortcut>
+        <div className="flex-1 flex min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-hidden">
+            <RichTextEditor
+              content={selectedNote.content}
+              onChange={handleContentChange}
+              placeholder="Start writing your note..."
+              className="h-full"
+              onEditorReady={setEditor}
+            />
+          </div>
+          
+          {showOutline && (
+            <div className="w-48 border-l border-border flex-shrink-0 overflow-y-auto">
+              <OutlineNavigation 
+                content={selectedNote.content} 
+                editorRef={{ current: editor } as React.RefObject<any>}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-border px-4 py-3 bg-muted/20 flex-shrink-0">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-4">
+              <span>Auto-saved</span>
+              <span>Words: {getTextContent(selectedNote.content).split(/\s+/).filter(word => word.length > 0).length}</span>
+            </div>
+            <div>
+              <span>{getTextContent(selectedNote.content).length}/100k</span>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Editor - Takes up most space */}
-      <div className="flex-1 overflow-hidden">
-        <RichTextEditor
-          content={selectedNote.content}
-          onChange={handleContentChange}
-          placeholder="Start writing your note..."
-          className="h-full"
-          onEditorReady={setEditor}
-        />
-      </div>
-
-      {/* Status bar - Fixed at bottom */}
-      <div className="border-t border-border px-4 py-3 bg-muted/20 flex-shrink-0">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <span>Auto-saved</span>
-            <span>Words: {getTextContent(selectedNote.content).split(/\s+/).filter(word => word.length > 0).length}</span>
-          </div>
-          <div>
-            <span>{getTextContent(selectedNote.content).length}/100k</span>
-          </div>
-        </div>
-      </div>
       </div>
 
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>

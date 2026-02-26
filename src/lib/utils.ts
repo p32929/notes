@@ -26,7 +26,10 @@ export async function saveData() {
     const settingsChanged = 
       states.theme !== previousStates.theme ||
       states.color !== previousStates.color ||
-      states.selectedNoteId !== previousStates.selectedNoteId
+      states.selectedNoteId !== previousStates.selectedNoteId ||
+      states.isSplitView !== previousStates.isSplitView ||
+      states.activePaneId !== previousStates.activePaneId ||
+      JSON.stringify(states.splitLayout) !== JSON.stringify(previousStates.splitLayout)
     
     if (settingsChanged) {
       await saveSettings(states)
@@ -61,17 +64,18 @@ async function saveSettings(states: any) {
     id: 1,
     theme: states.theme,
     color: states.color,
-    selectedNoteId: states.selectedNoteId
+    selectedNoteId: states.selectedNoteId,
+    isSplitView: states.isSplitView,
+    splitLayout: states.splitLayout,
+    activePaneId: states.activePaneId
   }
   await storage.saveSettings(settings)
 }
 
 export async function getData() {
   try {
-    // First, try to migrate data from localStorage if needed
     await storage.migrateFromLocalStorage()
     
-    // Load notes and settings from IndexedDB
     const notes = await storage.getNotes()
     const settings = await storage.getSettings()
     
@@ -79,19 +83,24 @@ export async function getData() {
       notes: notes || [],
       theme: settings?.theme || 'system',
       color: settings?.color || 'blue',
-      selectedNoteId: settings?.selectedNoteId || null
+      selectedNoteId: settings?.selectedNoteId || null,
+      isSplitView: settings?.isSplitView || false,
+      splitLayout: settings?.splitLayout || null,
+      activePaneId: settings?.activePaneId || null
     }
     
     controller.setStates(stateData)
   } catch (error) {
     console.error('Failed to load data:', error)
     
-    // Fallback to empty state if everything fails
     controller.setStates({
       notes: [],
       theme: 'system',
       color: 'blue',
-      selectedNoteId: null
+      selectedNoteId: null,
+      isSplitView: false,
+      splitLayout: null,
+      activePaneId: null
     })
   }
 }
