@@ -1,4 +1,5 @@
 import Dexie, { Table } from 'dexie'
+import { ILayoutNode } from './StatesController'
 
 export interface Note {
   id: string
@@ -13,6 +14,10 @@ export interface AppSettings {
   theme: 'light' | 'dark' | 'system'
   color: string
   selectedNoteId: string | null
+  // Split View settings
+  isSplitView: boolean
+  layout: ILayoutNode
+  activeEditorId: string
 }
 
 export class NotesDatabase extends Dexie {
@@ -21,9 +26,9 @@ export class NotesDatabase extends Dexie {
 
   constructor() {
     super('NotesDatabase')
-    this.version(1).stores({
+    this.version(2).stores({
       notes: 'id, title, content, createdAt, updatedAt',
-      settings: '++id, theme, color, selectedNoteId'
+      settings: '++id, theme, color, selectedNoteId, isSplitView'
     })
   }
 }
@@ -151,12 +156,26 @@ export class DatabaseStorage {
       const theme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' || 'system'
       const color = localStorage.getItem('color') || 'blue'
       const selectedNoteId = localStorage.getItem('selectedNoteId') || null
-      
+      const isSplitView = localStorage.getItem('isSplitView') === 'true'
+      const activeEditorId = localStorage.getItem('activeEditorId') || ''
+      let layout: ILayoutNode | undefined
+      try {
+        const layoutStr = localStorage.getItem('layout')
+        if (layoutStr) {
+          layout = JSON.parse(layoutStr)
+        }
+      } catch {
+        layout = undefined
+      }
+
       return {
         id: 1,
         theme,
         color,
-        selectedNoteId
+        selectedNoteId,
+        isSplitView,
+        layout: layout || { id: 'default', type: 'leaf', noteId: null },
+        activeEditorId
       }
     } catch (error) {
       console.error('Failed to get settings from localStorage:', error)
@@ -172,6 +191,11 @@ export class DatabaseStorage {
         localStorage.setItem('selectedNoteId', settings.selectedNoteId)
       } else {
         localStorage.removeItem('selectedNoteId')
+      }
+      localStorage.setItem('isSplitView', String(settings.isSplitView))
+      localStorage.setItem('activeEditorId', settings.activeEditorId)
+      if (settings.layout) {
+        localStorage.setItem('layout', JSON.stringify(settings.layout))
       }
     } catch (error) {
       console.error('Failed to save settings to localStorage:', error)
