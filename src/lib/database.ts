@@ -8,6 +8,10 @@ export interface Note {
   updatedAt: Date
 }
 
+export interface TrashNote extends Note {
+  deletedAt: Date
+}
+
 export interface AppSettings {
   id: number
   theme: 'light' | 'dark' | 'system'
@@ -17,12 +21,14 @@ export interface AppSettings {
 
 export class NotesDatabase extends Dexie {
   notes!: Table<Note>
+  trash!: Table<TrashNote>
   settings!: Table<AppSettings>
 
   constructor() {
     super('NotesDatabase')
-    this.version(1).stores({
+    this.version(2).stores({
       notes: 'id, title, content, createdAt, updatedAt',
+      trash: 'id, title, content, createdAt, updatedAt, deletedAt',
       settings: '++id, theme, color, selectedNoteId'
     })
   }
@@ -70,6 +76,65 @@ export class DatabaseStorage {
     }
   }
 
+  async getTrash(): Promise<TrashNote[]> {
+    try {
+      const trash = await db.trash.orderBy('deletedAt').reverse().toArray()
+      return trash
+    } catch (error) {
+      console.error('Failed to get trash from IndexedDB:', error)
+      // Fallback to localStorage
+      return this.getTrashFromLocalStorage()
+    }
+  }
+
+  async saveTrash(trash: TrashNote[]): Promise<void> {
+    try {
+      await db.trash.clear()
+      await db.trash.bulkAdd(trash)
+    } catch (error) {
+      console.error('Failed to save trash to IndexedDB:', error)
+      // Fallback to localStorage
+      this.saveTrashToLocalStorage(trash)
+    }
+  }
+
+  async saveTrashNote(note: TrashNote): Promise<void> {
+    try {
+      await db.trash.put(note)
+    } catch (error) {
+      console.error('Failed to save trash note to IndexedDB:', error)
+      // Fallback: save all trash
+      const trash = await this.getTrash()
+      const updatedTrash = trash.map(n => n.id === note.id ? note : n)
+      if (!trash.find(n => n.id === note.id)) {
+        updatedTrash.push(note)
+      }
+      this.saveTrashToLocalStorage(updatedTrash)
+    }
+  }
+
+  async deleteTrashNote(id: string): Promise<void> {
+    try {
+      await db.trash.delete(id)
+    } catch (error) {
+      console.error('Failed to delete trash note from IndexedDB:', error)
+      // Fallback: save all trash except the deleted one
+      const trash = await this.getTrash()
+      const updatedTrash = trash.filter(n => n.id !== id)
+      this.saveTrashToLocalStorage(updatedTrash)
+    }
+  }
+
+  async clearTrash(): Promise<void> {
+    try {
+      await db.trash.clear()
+    } catch (error) {
+      console.error('Failed to clear trash from IndexedDB:', error)
+      // Fallback: save empty trash
+      this.saveTrashToLocalStorage([])
+    }
+  }
+
   async getSettings(): Promise<AppSettings | null> {
     try {
       const settings = await db.settings.toArray()
@@ -97,16 +162,23 @@ export class DatabaseStorage {
     try {
       // Check if we already have data in IndexedDB
       const existingNotes = await db.notes.count()
+      const existingTrash = await db.trash.count()
       const existingSettings = await db.settings.count()
 
-      if (existingNotes === 0 && existingSettings === 0) {
+      if (existingNotes === 0 && existingTrash === 0 && existingSettings === 0) {
         // Get data from localStorage
         const localStorageNotes = this.getNotesFromLocalStorage()
+        const localStorageTrash = this.getTrashFromLocalStorage()
         const localStorageSettings = this.getSettingsFromLocalStorage()
 
         if (localStorageNotes.length > 0) {
           await this.saveNotes(localStorageNotes)
           console.log(`Migrated ${localStorageNotes.length} notes from localStorage to IndexedDB`)
+        }
+
+        if (localStorageTrash.length > 0) {
+          await this.saveTrash(localStorageTrash)
+          console.log(`Migrated ${localStorageTrash.length} trash notes from localStorage to IndexedDB`)
         }
 
         if (localStorageSettings) {
@@ -143,6 +215,33 @@ export class DatabaseStorage {
       localStorage.setItem('notes', JSON.stringify(notes))
     } catch (error) {
       console.error('Failed to save notes to localStorage:', error)
+    }
+  }
+
+  private getTrashFromLocalStorage(): TrashNote[] {
+    try {
+      const stored = localStorage.getItem('trash')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        return Array.isArray(parsed) ? parsed.map(note => ({
+          ...note,
+          createdAt: new Date(note.createdAt),
+          updatedAt: new Date(note.updatedAt),
+          deletedAt: new Date(note.deletedAt)
+        })) : []
+      }
+      return []
+    } catch (error) {
+      console.error('Failed to get trash from localStorage:', error)
+      return []
+    }
+  }
+
+  private saveTrashToLocalStorage(trash: TrashNote[]): void {
+    try {
+      localStorage.setItem('trash', JSON.stringify(trash))
+    } catch (error) {
+      console.error('Failed to save trash to localStorage:', error)
     }
   }
 

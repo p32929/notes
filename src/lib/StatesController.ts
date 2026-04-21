@@ -18,14 +18,21 @@ export interface INote {
     updatedAt: number
 }
 
+export interface ITrashNote extends INote {
+    deletedAt: number
+}
+
 export interface IStates {
     selectedTab: number
     tabs: string[]
     // Enhanced state structure
     notes: INote[]
+    trash: ITrashNote[]
     selectedNoteId: string | null
+    selectedTrashNoteId: string | null
+    isTrashView: boolean
     searchQuery: string
-    sortBy: 'updatedAt' | 'createdAt' | 'title'
+    sortBy: 'updatedAt' | 'createdAt' | 'title' | 'deletedAt'
     sortOrder: 'asc' | 'desc'
     theme: 'light' | 'dark' | 'system'
     color?: string
@@ -41,7 +48,10 @@ export class Controller {
         
         // Enhanced state
         notes: [],
+        trash: [],
         selectedNoteId: null,
+        selectedTrashNoteId: null,
+        isTrashView: false,
         searchQuery: '',
         sortBy: 'updatedAt',
         sortOrder: 'desc',
@@ -125,14 +135,90 @@ export class Controller {
 
     @action
     deleteNote(id: string) {
-        this.states.notes = this.states.notes.filter(note => note.id !== id)
-        if (this.states.selectedNoteId === id) {
-            this.states.selectedNoteId = this.states.notes[0]?.id || null
+        const note = this.states.notes.find(n => n.id === id)
+        if (note) {
+            const trashNote: ITrashNote = {
+                ...note,
+                deletedAt: Date.now()
+            }
+            this.states.trash.push(trashNote)
+            this.states.notes = this.states.notes.filter(n => n.id !== id)
+            
+            if (this.states.selectedNoteId === id) {
+                this.states.selectedNoteId = this.states.notes[0]?.id || null
+            }
         }
     }
 
     @action
+    restoreNote(id: string) {
+        const trashNote = this.states.trash.find(n => n.id === id)
+        if (trashNote) {
+            const note: INote = {
+                id: trashNote.id,
+                title: trashNote.title,
+                content: trashNote.content,
+                createdAt: trashNote.createdAt,
+                updatedAt: trashNote.updatedAt
+            }
+            this.states.notes.push(note)
+            this.states.trash = this.states.trash.filter(n => n.id !== id)
+            
+            if (this.states.selectedTrashNoteId === id) {
+                this.states.selectedTrashNoteId = this.states.trash[0]?.id || null
+            }
+        }
+    }
+
+    @action
+    permanentlyDeleteNote(id: string) {
+        this.states.trash = this.states.trash.filter(n => n.id !== id)
+        if (this.states.selectedTrashNoteId === id) {
+            this.states.selectedTrashNoteId = this.states.trash[0]?.id || null
+        }
+    }
+
+    @action
+    emptyTrash() {
+        this.states.trash = []
+        this.states.selectedTrashNoteId = null
+    }
+
+    @action
+    toggleTrashView() {
+        this.states.isTrashView = !this.states.isTrashView
+        if (this.states.isTrashView) {
+            this.states.selectedNoteId = null
+        } else {
+            this.states.selectedTrashNoteId = null
+        }
+    }
+
+    @action
+    setTrashView(isTrashView: boolean) {
+        this.states.isTrashView = isTrashView
+        if (isTrashView) {
+            this.states.selectedNoteId = null
+        } else {
+            this.states.selectedTrashNoteId = null
+        }
+    }
+
+    @action
+    selectTrashNote(id: string | null) {
+        this.states.selectedTrashNoteId = id
+    }
+
+    @action
     clearAllNotes() {
+        const notesToMove = [...this.states.notes]
+        notesToMove.forEach(note => {
+            const trashNote: ITrashNote = {
+                ...note,
+                deletedAt: Date.now()
+            }
+            this.states.trash.push(trashNote)
+        })
         this.states.notes = []
         this.states.selectedNoteId = null
     }
@@ -200,6 +286,34 @@ export class Controller {
         })
 
         return notes
+    }
+
+    getFilteredTrash() {
+        let trash = [...this.states.trash]
+
+        // Filter by search query
+        if (this.states.searchQuery) {
+            const query = this.states.searchQuery.toLowerCase()
+            trash = trash.filter(note => 
+                note.title.toLowerCase().includes(query) ||
+                note.content.toLowerCase().includes(query)
+            )
+        }
+
+        // Sort trash notes (default by deletedAt descending)
+        const sortField = this.states.sortBy === 'deletedAt' ? 'deletedAt' : 'deletedAt'
+        trash.sort((a, b) => {
+            const aValue = a[sortField as keyof ITrashNote]
+            const bValue = b[sortField as keyof ITrashNote]
+            
+            if (this.states.sortOrder === 'asc') {
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
+            } else {
+                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+            }
+        })
+
+        return trash
     }
 }
 

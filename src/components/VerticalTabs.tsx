@@ -181,7 +181,12 @@ const VerticalTabs: React.FC = () => {
   }
 
   const handleExportNotes = () => {
-    const dataStr = JSON.stringify(states.notes, null, 2)
+    const exportData = {
+      version: 2,
+      notes: states.notes,
+      trash: states.trash
+    }
+    const dataStr = JSON.stringify(exportData, null, 2)
     const dataBlob = new Blob([dataStr], { type: 'application/json' })
     const url = URL.createObjectURL(dataBlob)
     const link = document.createElement('a')
@@ -204,27 +209,73 @@ const VerticalTabs: React.FC = () => {
         const reader = new FileReader()
         reader.onload = async (e) => {
           try {
-            const importedNotes = JSON.parse(e.target?.result as string)
-            if (Array.isArray(importedNotes)) {
-              // Create all notes in batch to avoid multiple auto-saves
-              const newNotes: any[] = []
-              
-              importedNotes.forEach((note: any) => {
-                if (note.title !== undefined && note.content !== undefined) {
-                  const noteId = controller.createNote()
-                  controller.updateNote(noteId, {
-                    title: note.title,
-                    content: note.content,
-                    // Preserve original timestamps if they exist
-                    createdAt: note.createdAt ? new Date(note.createdAt) : undefined,
-                    updatedAt: note.updatedAt ? new Date(note.updatedAt) : undefined
-                  })
-                }
-              })
-              
-              console.log(`Successfully imported ${importedNotes.length} notes`)
+            const importedData = JSON.parse(e.target?.result as string)
+            
+            let notesToImport: any[] = []
+            let trashToImport: any[] = []
+            
+            if (Array.isArray(importedData)) {
+              notesToImport = importedData
+              console.log('Importing old format (notes array only)')
+            } else if (typeof importedData === 'object' && importedData !== null) {
+              notesToImport = Array.isArray(importedData.notes) ? importedData.notes : []
+              trashToImport = Array.isArray(importedData.trash) ? importedData.trash : []
+              console.log('Importing new format (with notes and trash)')
             } else {
-              console.error('Invalid file format: expected array of notes')
+              console.error('Invalid file format')
+              alert('Failed to import notes. Please check the file format.')
+              return
+            }
+            
+            let notesCount = 0
+            let trashCount = 0
+            
+            notesToImport.forEach((note: any) => {
+              if (note.title !== undefined && note.content !== undefined) {
+                const noteId = controller.createNote()
+                controller.updateNote(noteId, {
+                  title: note.title,
+                  content: note.content,
+                  createdAt: note.createdAt ? (typeof note.createdAt === 'number' ? note.createdAt : new Date(note.createdAt).getTime()) : undefined,
+                  updatedAt: note.updatedAt ? (typeof note.updatedAt === 'number' ? note.updatedAt : new Date(note.updatedAt).getTime()) : undefined
+                })
+                notesCount++
+              }
+            })
+            
+            trashToImport.forEach((note: any) => {
+              if (note.title !== undefined && note.content !== undefined) {
+                const noteId = controller.createNote()
+                controller.updateNote(noteId, {
+                  title: note.title,
+                  content: note.content,
+                  createdAt: note.createdAt ? (typeof note.createdAt === 'number' ? note.createdAt : new Date(note.createdAt).getTime()) : undefined,
+                  updatedAt: note.updatedAt ? (typeof note.updatedAt === 'number' ? note.updatedAt : new Date(note.updatedAt).getTime()) : undefined
+                })
+                
+                const noteToDelete = controller.states.notes.find(n => n.id === noteId)
+                if (noteToDelete) {
+                  const trashNote: any = {
+                    ...noteToDelete,
+                    deletedAt: note.deletedAt ? (typeof note.deletedAt === 'number' ? note.deletedAt : new Date(note.deletedAt).getTime()) : Date.now()
+                  }
+                  
+                  controller.states.trash.push(trashNote)
+                  controller.states.notes = controller.states.notes.filter((n: any) => n.id !== noteId)
+                  
+                  if (controller.states.selectedNoteId === noteId) {
+                    controller.states.selectedNoteId = controller.states.notes[0]?.id || null
+                  }
+                  
+                  trashCount++
+                }
+              }
+            })
+            
+            if (notesCount > 0 || trashCount > 0) {
+              console.log(`Successfully imported ${notesCount} notes and ${trashCount} trash items`)
+            } else {
+              console.error('No valid notes found in the file')
             }
           } catch (error) {
             console.error('Error importing notes:', error)
@@ -303,6 +354,24 @@ const VerticalTabs: React.FC = () => {
               <Search className="h-4 w-4" />
             </Button>
           </TooltipWithShortcut>
+
+          <SimpleTooltip title={`Trash${states.trash.length > 0 ? ` (${states.trash.length})` : ''}`} side="right">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => controller.setTrashView(true)}
+              className={`w-full h-8 p-0 flex items-center justify-center hover:bg-muted/50 transition-all duration-200 relative ${
+                states.trash.length > 0 ? 'text-red-500' : ''
+              }`}
+            >
+              <Trash2 className="h-4 w-4" />
+              {states.trash.length > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 text-[10px] font-medium bg-red-500 text-white rounded-full flex items-center justify-center">
+                  {states.trash.length > 99 ? '99+' : states.trash.length}
+                </span>
+              )}
+            </Button>
+          </SimpleTooltip>
 
           <SimpleTooltip title="Help" side="right">
             <Button
@@ -470,14 +539,15 @@ const VerticalTabs: React.FC = () => {
         <Dialog open={clearAllDialog} onOpenChange={setClearAllDialog}>
           <DialogContent className="w-[95vw] max-w-md sm:w-auto">
             <DialogHeader>
-              <DialogTitle>Clear All Notes</DialogTitle>
+              <DialogTitle>Move All Notes to Trash</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete all notes? This will permanently remove all {states.notes.length} note{states.notes.length !== 1 ? 's' : ''} and cannot be undone.
+                Are you sure you want to move all {states.notes.length} note{states.notes.length !== 1 ? 's' : ''} to Trash?
+                You can restore them later from the Trash view.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex flex-col sm:flex-row gap-2">
               <div className="text-xs text-muted-foreground mb-2 sm:mb-0 sm:mr-auto">
-                This action cannot be undone
+                Notes will be moved to Trash
               </div>
               <div className="flex gap-2">
                 <Button 
@@ -490,7 +560,7 @@ const VerticalTabs: React.FC = () => {
                   variant="destructive" 
                   onClick={confirmClearAllNotes}
                 >
-                  Clear All Notes
+                  Move All to Trash
                 </Button>
               </div>
             </DialogFooter>
