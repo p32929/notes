@@ -4,6 +4,7 @@ import { useEffect, useCallback, useState } from "react";
 import React from "react";
 import { getData, saveData } from "@/lib/utils";
 import EditorPanel from "@/components/EditorPanel";
+import TrashPanel from "@/components/TrashPanel";
 import VerticalTabs from "@/components/VerticalTabs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { SearchDialog } from "@/components/SearchDialog";
@@ -129,19 +130,25 @@ function App() {
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      {/* Vertical Tabs Sidebar */}
-      <VerticalTabs />
+      {/* Vertical Tabs Sidebar - only show when not in trash view or when trash list is shown */}
+      {!states.isTrashView && <VerticalTabs />}
 
-      {/* Editor Panel */}
+      {/* Main Panel */}
       <div className="flex-1 min-w-0">
-        <EditorPanel />
+        {states.isTrashView ? (
+          <TrashPanel />
+        ) : (
+          <EditorPanel />
+        )}
       </div>
 
-      {/* Search Dialog */}
-      <SearchDialog 
-        open={showSearchDialog} 
-        onOpenChange={setShowSearchDialog} 
-      />
+      {/* Search Dialog - only show when not in trash view */}
+      {!states.isTrashView && (
+        <SearchDialog 
+          open={showSearchDialog} 
+          onOpenChange={setShowSearchDialog} 
+        />
+      )}
     </div>
   );
 }

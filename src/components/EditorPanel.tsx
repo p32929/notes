@@ -278,14 +278,15 @@ const EditorPanel: React.FC = () => {
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
         <DialogContent className="w-[95vw] max-w-md sm:w-auto">
           <DialogHeader>
-            <DialogTitle>Delete Note</DialogTitle>
+            <DialogTitle>Move to Trash</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{selectedNote.title || 'Untitled'}"? This action cannot be undone.
+              Are you sure you want to move "{selectedNote.title || 'Untitled'}" to Trash?
+              You can restore it later from the Trash view.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
             <div className="text-xs text-muted-foreground mb-2 sm:mb-0 sm:mr-auto">
-              Press Enter to delete, Escape to cancel
+              Press Enter to confirm, Escape to cancel
             </div>
             <div className="flex gap-2">
               <Button 
@@ -300,7 +301,7 @@ const EditorPanel: React.FC = () => {
                 onClick={confirmDelete}
                 autoFocus
               >
-                Delete
+                Move to Trash
                 <span className="ml-2 text-xs text-white">Enter</span>
               </Button>
             </div>

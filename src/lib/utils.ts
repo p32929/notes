@@ -17,6 +17,7 @@ export async function saveData() {
     // If this is the first save or a bulk operation, save everything
     if (!previousStates) {
       await storage.saveNotes(states.notes)
+      await storage.saveTrash(states.trash)
       await saveSettings(states)
       previousStates = JSON.parse(JSON.stringify(states)) // Deep copy
       return
@@ -26,7 +27,9 @@ export async function saveData() {
     const settingsChanged = 
       states.theme !== previousStates.theme ||
       states.color !== previousStates.color ||
-      states.selectedNoteId !== previousStates.selectedNoteId
+      states.selectedNoteId !== previousStates.selectedNoteId ||
+      states.selectedTrashNoteId !== previousStates.selectedTrashNoteId ||
+      states.isTrashView !== previousStates.isTrashView
     
     if (settingsChanged) {
       await saveSettings(states)
@@ -38,13 +41,30 @@ export async function saveData() {
     } else {
       // Check for individual note changes
       for (const note of states.notes) {
-        const prevNote = previousStates.notes.find(n => n.id === note.id)
+        const prevNote = previousStates.notes.find((n: any) => n.id === note.id)
         if (!prevNote || 
             note.title !== prevNote.title || 
             note.content !== prevNote.content ||
             note.updatedAt !== prevNote.updatedAt) {
           // Only save this specific note
           await storage.saveNote(note)
+        }
+      }
+    }
+    
+    // Check if trash array structure changed (added/removed from trash)
+    if (states.trash.length !== previousStates.trash.length) {
+      await storage.saveTrash(states.trash)
+    } else {
+      // Check for individual trash note changes
+      for (const note of states.trash) {
+        const prevNote = previousStates.trash.find((n: any) => n.id === note.id)
+        if (!prevNote || 
+            note.title !== prevNote.title || 
+            note.content !== prevNote.content ||
+            note.deletedAt !== prevNote.deletedAt) {
+          // Only save this specific trash note
+          await storage.saveTrashNote(note)
         }
       }
     }
@@ -71,15 +91,33 @@ export async function getData() {
     // First, try to migrate data from localStorage if needed
     await storage.migrateFromLocalStorage()
     
-    // Load notes and settings from IndexedDB
+    // Load notes, trash, and settings from IndexedDB
     const notes = await storage.getNotes()
+    const trash = await storage.getTrash()
     const settings = await storage.getSettings()
     
+    // Convert Date objects to timestamps for state consistency
+    const notesWithTimestamps = notes.map(note => ({
+      ...note,
+      createdAt: note.createdAt instanceof Date ? note.createdAt.getTime() : note.createdAt,
+      updatedAt: note.updatedAt instanceof Date ? note.updatedAt.getTime() : note.updatedAt
+    }))
+    
+    const trashWithTimestamps = trash.map(note => ({
+      ...note,
+      createdAt: note.createdAt instanceof Date ? note.createdAt.getTime() : note.createdAt,
+      updatedAt: note.updatedAt instanceof Date ? note.updatedAt.getTime() : note.updatedAt,
+      deletedAt: note.deletedAt instanceof Date ? note.deletedAt.getTime() : note.deletedAt
+    }))
+    
     const stateData = {
-      notes: notes || [],
+      notes: notesWithTimestamps || [],
+      trash: trashWithTimestamps || [],
       theme: settings?.theme || 'system',
       color: settings?.color || 'blue',
-      selectedNoteId: settings?.selectedNoteId || null
+      selectedNoteId: settings?.selectedNoteId || null,
+      selectedTrashNoteId: null,
+      isTrashView: false
     }
     
     controller.setStates(stateData)
@@ -89,9 +127,12 @@ export async function getData() {
     // Fallback to empty state if everything fails
     controller.setStates({
       notes: [],
+      trash: [],
       theme: 'system',
       color: 'blue',
-      selectedNoteId: null
+      selectedNoteId: null,
+      selectedTrashNoteId: null,
+      isTrashView: false
     })
   }
 }
